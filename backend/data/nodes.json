@@ -1,0 +1,245 @@
+{
+  "note": "type: hub/city/county；坐标为节点近似位置；throughput 单位 万吨/年（演示值）",
+  "nodes": [
+    {
+      "id": "CS_HUB",
+      "name": "长沙金霞物流枢纽",
+      "type": "hub",
+      "city": "长沙市",
+      "lng": 112.982,
+      "lat": 28.33,
+      "throughput": 2600,
+      "industries": [
+        "先进制造",
+        "跨境电商"
+      ]
+    },
+    {
+      "id": "ZZ_HUB",
+      "name": "株洲湘粤非联运枢纽",
+      "type": "hub",
+      "city": "株洲市",
+      "lng": 113.133,
+      "lat": 27.834,
+      "throughput": 1800,
+      "industries": [
+        "先进制造",
+        "有色冶金"
+      ]
+    },
+    {
+      "id": "HY_HUB",
+      "name": "衡阳白沙洲物流园",
+      "type": "hub",
+      "city": "衡阳市",
+      "lng": 112.572,
+      "lat": 26.893,
+      "throughput": 1500,
+      "industries": [
+        "先进制造",
+        "特色农业"
+      ]
+    },
+    {
+      "id": "YY_HUB",
+      "name": "岳阳城陵矶港枢纽",
+      "type": "hub",
+      "city": "岳阳市",
+      "lng": 113.13,
+      "lat": 29.36,
+      "throughput": 2100,
+      "industries": [
+        "石化化工",
+        "粮油加工"
+      ]
+    },
+    {
+      "id": "CZ_HUB",
+      "name": "郴州湘南国际物流园",
+      "type": "hub",
+      "city": "郴州市",
+      "lng": 113.032,
+      "lat": 25.794,
+      "throughput": 1200,
+      "industries": [
+        "有色金属",
+        "特色农业"
+      ]
+    },
+    {
+      "id": "HH_HUB",
+      "name": "怀化湘西商贸物流枢纽",
+      "type": "hub",
+      "city": "怀化市",
+      "lng": 110.001,
+      "lat": 27.572,
+      "throughput": 1300,
+      "industries": [
+        "商贸批发",
+        "特色农业"
+      ]
+    },
+    {
+      "id": "CD_HUB",
+      "name": "常德德山物流园",
+      "type": "hub",
+      "city": "常德市",
+      "lng": 111.691,
+      "lat": 28.902,
+      "throughput": 1400,
+      "industries": [
+        "装备制造",
+        "粮油加工"
+      ]
+    },
+    {
+      "id": "CS_DONG",
+      "name": "长沙东·黄兴集配中心",
+      "type": "city",
+      "city": "长沙市",
+      "lng": 113.155,
+      "lat": 28.208,
+      "throughput": 900,
+      "industries": [
+        "电商快消",
+        "医药"
+      ]
+    },
+    {
+      "id": "XT_HT",
+      "name": "湘潭荷塘综合物流园",
+      "type": "city",
+      "city": "湘潭市",
+      "lng": 112.948,
+      "lat": 27.851,
+      "throughput": 520,
+      "industries": [
+        "先进制造"
+      ]
+    },
+    {
+      "id": "YG_HS",
+      "name": "益阳赫山电商物流中心",
+      "type": "city",
+      "city": "益阳市",
+      "lng": 112.355,
+      "lat": 28.552,
+      "throughput": 430,
+      "industries": [
+        "电商快消",
+        "安化黑茶"
+      ]
+    },
+    {
+      "id": "LD_WB",
+      "name": "娄底万宝新区物流园",
+      "type": "city",
+      "city": "娄底市",
+      "lng": 111.994,
+      "lat": 27.701,
+      "throughput": 380,
+      "industries": [
+        "钢铁建材"
+      ]
+    },
+    {
+      "id": "SY_DX",
+      "name": "邵阳湘商产业园物流园",
+      "type": "city",
+      "city": "邵阳市",
+      "lng": 111.469,
+      "lat": 27.238,
+      "throughput": 360,
+      "industries": [
+        "特色轻工"
+      ]
+    },
+    {
+      "id": "YZ_LST",
+      "name": "永州冷水滩物流中心",
+      "type": "city",
+      "city": "永州市",
+      "lng": 111.597,
+      "lat": 26.439,
+      "throughput": 340,
+      "industries": [
+        "特色农业",
+        "轻工"
+      ]
+    },
+    {
+      "id": "ZJJ_YD",
+      "name": "张家界永定配送中心",
+      "type": "city",
+      "city": "张家界市",
+      "lng": 110.48,
+      "lat": 29.127,
+      "throughput": 220,
+      "industries": [
+        "文旅商品"
+      ]
+    },
+    {
+      "id": "JS_QZ",
+      "name": "吉首乾州冷链物流园",
+      "type": "city",
+      "city": "湘西州",
+      "lng": 109.731,
+      "lat": 28.264,
+      "throughput": 260,
+      "industries": [
+        "冷链生鲜",
+        "特色农业"
+      ]
+    },
+    {
+      "id": "LY_GK",
+      "name": "浏阳关口共配点",
+      "type": "county",
+      "city": "浏阳市",
+      "lng": 113.643,
+      "lat": 28.163,
+      "throughput": 150,
+      "industries": [
+        "烟花花炮",
+        "电商快消"
+      ]
+    },
+    {
+      "id": "NX_YT",
+      "name": "宁乡玉潭共配中心",
+      "type": "county",
+      "city": "宁乡市",
+      "lng": 112.551,
+      "lat": 28.272,
+      "throughput": 180,
+      "industries": [
+        "食品加工"
+      ]
+    },
+    {
+      "id": "AR_YLJ",
+      "name": "安仁永乐江服务站",
+      "type": "county",
+      "city": "郴州市",
+      "lng": 113.268,
+      "lat": 26.712,
+      "throughput": 90,
+      "industries": [
+        "中药材"
+      ]
+    },
+    {
+      "id": "LX_WX",
+      "name": "泸溪武溪客货邮融合点",
+      "type": "county",
+      "city": "湘西州",
+      "lng": 110.077,
+      "lat": 28.301,
+      "throughput": 70,
+      "industries": [
+        "柑橘产业"
+      ]
+    }
+  ]
+}

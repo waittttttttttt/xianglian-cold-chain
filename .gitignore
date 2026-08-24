@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 临时
+*.log
+.superpowers/

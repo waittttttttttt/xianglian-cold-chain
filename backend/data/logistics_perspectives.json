@@ -1,0 +1,183 @@
+{
+  "key": "logistics",
+  "title": "物流端",
+  "subtitle": "网络布局 · 干线支线 · 运力资源",
+  "intro": "构建「枢纽 + 城市 + 县域」三级物流网络，规划六条干线走廊与四条县域接驳线。",
+  "cards": [
+    {
+      "label": "物流枢纽",
+      "value": "7",
+      "unit": "个"
+    },
+    {
+      "label": "城市配送中心",
+      "value": "8",
+      "unit": "个"
+    },
+    {
+      "label": "县域服务站",
+      "value": "4",
+      "unit": "个"
+    },
+    {
+      "label": "干线走廊",
+      "value": "6",
+      "unit": "条"
+    }
+  ],
+  "levels": [
+    {
+      "level": "一级枢纽",
+      "desc": "全省分拨与国际联运衔接",
+      "nodes": [
+        "长沙金霞",
+        "株洲湘粤非",
+        "岳阳城陵矶",
+        "郴州湘南",
+        "怀化湘西"
+      ]
+    },
+    {
+      "level": "二级中心",
+      "desc": "市域集散与共同配送",
+      "nodes": [
+        "黄兴集配",
+        "湘潭荷塘",
+        "益阳赫山",
+        "娄底万宝",
+        "邵阳湘商",
+        "永州冷水滩",
+        "张家界永定",
+        "吉首乾州"
+      ]
+    },
+    {
+      "level": "三级站点",
+      "desc": "县乡村末端揽投与客货邮融合",
+      "nodes": [
+        "浏阳关口",
+        "宁乡玉潭",
+        "安仁永乐江",
+        "泸溪武溪"
+      ]
+    }
+  ],
+  "fleet": [
+    {
+      "type": "干线牵引车（17.5米）",
+      "count": 46,
+      "avgLoad": 30,
+      "usage": 82
+    },
+    {
+      "type": "厢式货车（9.6米）",
+      "count": 128,
+      "avgLoad": 15,
+      "usage": 76
+    },
+    {
+      "type": "冷链车（4.2米）",
+      "count": 64,
+      "avgLoad": 5,
+      "usage": 88
+    },
+    {
+      "type": "新能源城配车",
+      "count": 152,
+      "avgLoad": 2,
+      "usage": 71
+    }
+  ],
+  "corridors": [
+    {
+      "id": "R1",
+      "name": "京广主轴走廊",
+      "distanceKm": 350,
+      "timeHours": 6.5,
+      "costPerTonKm": 0.42,
+      "loadFactor": 87
+    },
+    {
+      "id": "R2",
+      "name": "长江水铁联运走廊",
+      "distanceKm": 165,
+      "timeHours": 9.0,
+      "costPerTonKm": 0.24,
+      "loadFactor": 79
+    },
+    {
+      "id": "R3",
+      "name": "张吉怀西线走廊",
+      "distanceKm": 420,
+      "timeHours": 7.5,
+      "costPerTonKm": 0.48,
+      "loadFactor": 72
+    },
+    {
+      "id": "R4",
+      "name": "沪昆通道",
+      "distanceKm": 480,
+      "timeHours": 8.2,
+      "costPerTonKm": 0.45,
+      "loadFactor": 81
+    },
+    {
+      "id": "R5",
+      "name": "洞庭湖环线",
+      "distanceKm": 260,
+      "timeHours": 5.5,
+      "costPerTonKm": 0.4,
+      "loadFactor": 75
+    },
+    {
+      "id": "R6",
+      "name": "湘南环线",
+      "distanceKm": 380,
+      "timeHours": 7.0,
+      "costPerTonKm": 0.44,
+      "loadFactor": 68
+    }
+  ],
+  "charts": {
+    "corridorCost": {
+      "names": [
+        "京广主轴",
+        "水铁联运",
+        "张吉怀西线",
+        "沪昆通道",
+        "洞庭环线",
+        "湘南环线"
+      ],
+      "costPerTonKm": [
+        0.42,
+        0.24,
+        0.48,
+        0.45,
+        0.4,
+        0.44
+      ],
+      "loadFactor": [
+        87,
+        79,
+        72,
+        81,
+        75,
+        68
+      ]
+    },
+    "fleetUsage": {
+      "names": [
+        "干线牵引车",
+        "9.6米厢式",
+        "4.2米冷链",
+        "新能源城配"
+      ],
+      "usage": [
+        82,
+        76,
+        88,
+        71
+      ]
+    }
+  }
+}

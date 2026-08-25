@@ -7,8 +7,15 @@
 import json
 import math
 import os
+import socketserver
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse
+
+
+class ThreadingHTTPServer(socketserver.ThreadingMixIn, HTTPServer):
+    """多线程 HTTP 服务：单个连接卡住不会阻塞其他请求（兼容 Python 3.6）。"""
+    daemon_threads = True
+    allow_reuse_address = True
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, 'data')
@@ -262,5 +269,6 @@ if __name__ == '__main__':
     print(' 湘链智图 · 湖南省物流规划数字平台 后端已启动')
     print(' 本机访问:  http://localhost:%d/' % port)
     print(' 健康检查:  http://localhost:%d/api/health' % port)
+    print(' （多线程模式，关闭本窗口即停止服务）')
     print('=' * 52)
-    HTTPServer(('0.0.0.0', port), Handler).serve_forever()
+    ThreadingHTTPServer(('0.0.0.0', port), Handler).serve_forever()

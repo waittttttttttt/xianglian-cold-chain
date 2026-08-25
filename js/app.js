@@ -68,6 +68,43 @@ function debounce(fn, ms) {
   return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
 }
 
+/* 页面加载器 */
+function hidePageLoader() {
+  const loader = document.getElementById('pageLoader');
+  if (loader) loader.classList.add('hidden');
+}
+
+/* 滚动进度条 */
+function setupScrollProgress() {
+  const bar = document.getElementById('scrollProgress');
+  if (!bar) return;
+  const onScroll = () => {
+    const doc = document.documentElement;
+    const scrolled = doc.scrollTop / (doc.scrollHeight - doc.clientHeight);
+    bar.style.width = Math.min(100, Math.max(0, scrolled * 100)) + '%';
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+}
+
+/* 按钮涟漪 */
+function bindRipple() {
+  document.querySelectorAll('.btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const r = btn.getBoundingClientRect();
+      const span = document.createElement('span');
+      span.className = 'ripple';
+      span.style.left = (e.clientX - r.left) + 'px';
+      span.style.top = (e.clientY - r.top) + 'px';
+      const size = Math.max(r.width, r.height);
+      span.style.width = span.style.height = size + 'px';
+      span.style.marginLeft = span.style.marginTop = (-size / 2) + 'px';
+      btn.appendChild(span);
+      setTimeout(() => span.remove(), 600);
+    });
+  });
+}
+
 function makeChart(el) {
   const inst = echarts.init(el);
   window.addEventListener('resize', debounce(() => inst.resize(), 200));
@@ -116,8 +153,18 @@ function initBgCanvas() {
       vx: (Math.random() - .5) * .35, vy: (Math.random() - .5) * .35,
     }));
   }
+  function drawGrid() {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(16,185,129,.06)';
+    ctx.lineWidth = 1;
+    const step = Math.max(36, Math.floor(w / 38));
+    for (let x = 0; x <= w; x += step) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+    for (let y = 0; y <= h; y += step) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+    ctx.restore();
+  }
   function frame() {
     ctx.clearRect(0, 0, w, h);
+    drawGrid();
     for (const p of pts) {
       p.x += p.vx; p.y += p.vy;
       if (p.x < 0 || p.x > w) p.vx *= -1;
@@ -132,8 +179,8 @@ function initBgCanvas() {
           ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke();
         }
       }
-      ctx.fillStyle = 'rgba(6,182,212,.4)';
-      ctx.beginPath(); ctx.arc(pts[i].x, pts[i].y, 1.6, 0, 7); ctx.fill();
+      ctx.fillStyle = 'rgba(6,182,212,.45)';
+      ctx.beginPath(); ctx.arc(pts[i].x, pts[i].y, 1.8, 0, 7); ctx.fill();
     }
     rafId = requestAnimationFrame(frame);
   }
@@ -391,6 +438,8 @@ function hunanMapOption(nodes, routes, filter) {
 }
 
 async function initHunanMap() {
+  const mapEl = document.getElementById('hunanMap');
+  mapEl.innerHTML = '<div class="skeleton chart-skeleton"></div>';
   try {
     const geojson = await getJSON(API.mapGeo);
     echarts.registerMap('hunan', geojson);
@@ -671,6 +720,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   initBgCanvas();
   setupScrollFx();
+  setupScrollProgress();
+  bindRipple();
 
   bindSeg('cargoSeg');
   bindSeg('seasonSeg');
@@ -709,4 +760,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 默认打开产业端
   switchPersp('industry');
+
+  // 所有关键资源就绪后关闭加载器
+  hidePageLoader();
 });

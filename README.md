@@ -28,7 +28,7 @@
 ┌─────────────── Python 后端 ──────────────┐
 │ backend/app_stdlib.py 零依赖 HTTP 服务    │
 │ backend/data/*.json   三端数据 + 节点/走廊 │
-│ backend/models/       规划模型（待接入）   │
+│ backend/INTEGRATION.md 数据与模型接入指南 │
 └──────────────────────────────────────┘
 ```
 
@@ -65,7 +65,7 @@ python app_stdlib.py
 1. **节点数据** → 改 `nodes.json`（id/name/type/city/lng/lat/throughput）
 2. **走廊规划** → 改 `routes.json`（stops 引用 nodes 的 id）
 3. **三端指标/图表** → 改 `industry_perspectives.json` / `logistics_perspectives.json` / `sales_perspectives.json`
-4. **规划模型代码** → 放入 `backend/models/`，在 `app_stdlib.py` 的 `compute_optimize_route()` 与 `compute_predict_demand()` 两处调用真实模型（函数已留好输入输出契约），或新增 API 路径后在 `js/app.js` 的 `runOptimize()/runPredict()` 对接
+4. **规划模型代码** → 参考 `backend/INTEGRATION.md`，把你的算法模块 import 到 `app_stdlib.py`，在 `compute_optimize_route()` 与 `compute_predict_demand()` 中调用；函数输入输出契约已固定
 5. 改完重启 `python app_stdlib.py` 即生效（数据有缓存）
 
 ## 六、部署上线（免费方案）
@@ -101,9 +101,8 @@ python app_stdlib.py
 ├── js/app.js                  # 全部交互逻辑
 └── backend/
     ├── app_stdlib.py          # 零依赖后端入口
-    ├── data/*.json            # 演示数据（可整体替换）
-    ├── models/                # 规划模型预留位
-    └── utils/
+    ├── INTEGRATION.md         # 真实数据与模型接入指南
+    └── data/*.json            # 演示数据（可整体替换）
 ```
 
 ---

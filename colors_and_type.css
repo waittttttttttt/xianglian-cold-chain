@@ -398,7 +398,91 @@ body {
 .toast.err { border-color: rgba(239, 68, 68, .45); color: #ef4444; }
 @keyframes toast-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
 
-/* ---------- 响应式 ---------- */
+/* ---------- 高级科技感增强 ---------- */
+
+/* 页面加载器 */
+#pageLoader {
+  position: fixed; inset: 0; z-index: 1000;
+  background: var(--bg);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: opacity .55s ease, visibility .55s ease;
+}
+#pageLoader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.loader-ring {
+  width: 64px; height: 64px; border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: var(--primary);
+  border-right-color: var(--secondary);
+  animation: spin 1s linear infinite;
+}
+.loader-text {
+  margin-top: 18px; font-size: 13px; color: var(--text-3); letter-spacing: 2px;
+  animation: pulse-text 1.5s ease-in-out infinite;
+}
+@keyframes pulse-text { 0%,100%{opacity:.55} 50%{opacity:1} }
+
+/* 顶部滚动进度条 */
+#scrollProgress {
+  position: fixed; top: 0; left: 0; height: 3px; z-index: 101;
+  width: 0%;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  box-shadow: 0 0 10px rgba(16,185,129,.45);
+}
+
+/* glass-panel 光扫 hover */
+.glass-panel {
+  position: relative; overflow: hidden;
+}
+.glass-panel::after {
+  content: ''; position: absolute; top: 0; left: -120%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+  transform: skewX(-20deg);
+  transition: left .7s ease;
+  pointer-events: none;
+}
+.glass-panel:hover::after { left: 140%; }
+html.dark .glass-panel::after { background: linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent); }
+
+/* KPI 数字扫描线 */
+.kpi-value {
+  position: relative; display: inline-block;
+}
+.kpi-value::after {
+  content: ''; position: absolute; left: 0; top: 55%; width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  opacity: .25; transform: scaleX(0); transform-origin: left;
+  transition: transform .8s ease .2s;
+}
+.kpi-item:hover .kpi-value::after { transform: scaleX(1); }
+
+/* Tab 下划线滑动 */
+.persp-tab::before {
+  width: 0; height: 4px; top: auto; bottom: 0; left: 50%; transform: translateX(-50%);
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  transition: width .3s ease;
+}
+.persp-tab.active::before { width: 40%; opacity: 1; }
+
+/* 按钮涟漪 */
+.btn { position: relative; overflow: hidden; }
+.btn .ripple {
+  position: absolute; border-radius: 50%; background: rgba(255,255,255,.35);
+  transform: scale(0); animation: ripple-anim .55s linear; pointer-events: none;
+}
+@keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+
+/* 骨架屏 */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-alt) 25%, rgba(16,185,129,.08) 50%, var(--bg-alt) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s infinite;
+  border-radius: 10px;
+}
+@keyframes skeleton-shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.chart-skeleton { height: 100%; min-height: 200px; }
+
+/* 响应式 ---------- */
 @media (max-width: 1024px) {
   .network-grid, .sim-grid { grid-template-columns: 1fr; }
   .nav-links { display: none; }

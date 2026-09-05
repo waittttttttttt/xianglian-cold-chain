@@ -1,0 +1,19 @@
+{
+  "note": "湖南省 14 市州冷链家底（演示占位值，待团队真实数据替换）。字段契约：id=唯一标识；lng/lat=市州中心坐标；coldStorageWanTons=冷库容量(万吨位)；freshOutputWanTons=生鲜年产量(万吨)；coldVehicles=冷藏车(辆)；flowRate=冷链流通率(%)；mainProducts=主导生鲜品类。占位流通率按全省简单均值 30% 口径校准（2026-08）",
+  "cities": [
+    { "id": "CS",  "name": "长沙市",     "lng": 112.94, "lat": 28.23, "coldStorageWanTons": 120, "freshOutputWanTons": 62, "coldVehicles": 4200, "flowRate": 42, "mainProducts": ["肉类加工", "乳品", "预制菜"] },
+    { "id": "ZZ",  "name": "株洲市",     "lng": 113.13, "lat": 27.83, "coldStorageWanTons": 45,  "freshOutputWanTons": 40, "coldVehicles": 1150, "flowRate": 38, "mainProducts": ["果蔬", "肉制品"] },
+    { "id": "XT",  "name": "湘潭市",     "lng": 112.94, "lat": 27.83, "coldStorageWanTons": 38,  "freshOutputWanTons": 30, "coldVehicles": 900,  "flowRate": 35, "mainProducts": ["生猪及肉制品", "果蔬"] },
+    { "id": "HY",  "name": "衡阳市",     "lng": 112.57, "lat": 26.89, "coldStorageWanTons": 48,  "freshOutputWanTons": 65, "coldVehicles": 1250, "flowRate": 32, "mainProducts": ["畜禽", "香芋", "柑橘"] },
+    { "id": "SY",  "name": "邵阳市",     "lng": 111.47, "lat": 27.24, "coldStorageWanTons": 26,  "freshOutputWanTons": 78, "coldVehicles": 750,  "flowRate": 27, "mainProducts": ["果蔬", "豆制品", "畜禽"] },
+    { "id": "YY",  "name": "岳阳市",     "lng": 113.13, "lat": 29.36, "coldStorageWanTons": 68,  "freshOutputWanTons": 48, "coldVehicles": 1600, "flowRate": 34, "mainProducts": ["淡水鱼", "小龙虾", "粮油"] },
+    { "id": "CD",  "name": "常德市",     "lng": 111.69, "lat": 29.04, "coldStorageWanTons": 55,  "freshOutputWanTons": 85, "coldVehicles": 1400, "flowRate": 33, "mainProducts": ["果蔬", "水产", "粮油"] },
+    { "id": "ZJJ", "name": "张家界市",   "lng": 110.48, "lat": 29.13, "coldStorageWanTons": 12,  "freshOutputWanTons": 15, "coldVehicles": 260,  "flowRate": 23, "mainProducts": ["文旅食品", "高山果蔬"] },
+    { "id": "YIY", "name": "益阳市",     "lng": 112.36, "lat": 28.55, "coldStorageWanTons": 28,  "freshOutputWanTons": 50, "coldVehicles": 650,  "flowRate": 30, "mainProducts": ["水产", "蔬菜", "笋竹"] },
+    { "id": "CZ",  "name": "郴州市",     "lng": 113.03, "lat": 25.79, "coldStorageWanTons": 30,  "freshOutputWanTons": 58, "coldVehicles": 850,  "flowRate": 29, "mainProducts": ["蔬菜", "柑橘", "东江鱼"] },
+    { "id": "YZ",  "name": "永州市",     "lng": 111.61, "lat": 26.23, "coldStorageWanTons": 30,  "freshOutputWanTons": 72, "coldVehicles": 700,  "flowRate": 26, "mainProducts": ["畜禽", "蔬菜", "柑橘"] },
+    { "id": "HH",  "name": "怀化市",     "lng": 110.00, "lat": 27.57, "coldStorageWanTons": 25,  "freshOutputWanTons": 55, "coldVehicles": 680,  "flowRate": 24, "mainProducts": ["柑橘", "果蔬", "禽畜"] },
+    { "id": "LD",  "name": "娄底市",     "lng": 111.99, "lat": 27.70, "coldStorageWanTons": 18,  "freshOutputWanTons": 35, "coldVehicles": 450,  "flowRate": 25, "mainProducts": ["畜禽", "果蔬"] },
+    { "id": "XX",  "name": "湘西州",     "lng": 109.74, "lat": 28.31, "coldStorageWanTons": 10,  "freshOutputWanTons": 29, "coldVehicles": 300,  "flowRate": 22, "mainProducts": ["猕猴桃", "柑橘", "腊肉"] }
+  ]
+}

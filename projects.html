@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>冷链项目 · 湘链智图</title>
+  <link rel="icon" href="favicon.svg?v=2" type="image/svg+xml">
+  <link rel="stylesheet" href="colors_and_type.css?v=9">
+  <style>
+    body { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 240px;
+      background: linear-gradient(180deg, #0c4a6e 0%, #0f766e 100%);
+      color: white; padding: 24px 0;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      overflow-y: auto; z-index: 100;
+    }
+    .sidebar-brand {
+      padding: 0 20px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .sidebar-logo {
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .sb-name { font-size: 16px; font-weight: 700; }
+    .sb-sub { font-size: 11px; opacity: 0.7; }
+
+    .sidebar-nav { padding: 16px 12px; }
+    .nav-group-title {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+      color: rgba(255,255,255,0.5);
+      padding: 12px 12px 8px; font-weight: 600;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px;
+      color: rgba(255,255,255,0.75);
+      text-decoration: none; font-size: 14px;
+      margin-bottom: 2px; transition: all 0.2s ease; cursor: pointer;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.1); color: white; }
+    .nav-item.active { background: rgba(255,255,255,0.18); color: white; font-weight: 600; }
+    .nav-icon { font-size: 18px; width: 24px; text-align: center; }
+
+    .sidebar-footer {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 16px 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .user-avatar {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #38bdf8, #5eead4);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 14px;
+    }
+    .user-name { font-size: 13px; font-weight: 600; }
+    .user-role { font-size: 11px; opacity: 0.6; }
+    .logout-btn {
+      margin-left: auto; background: none; border: none;
+      color: rgba(255,255,255,0.6); cursor: pointer;
+      font-size: 16px; padding: 4px 8px; border-radius: 6px; transition: all 0.2s;
+    }
+    .logout-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+
+    .main-content {
+      flex: 1; margin-left: 240px;
+      padding: 24px 32px; overflow-y: auto;
+    }
+
+    .breadcrumb {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--text-3); margin-bottom: 16px;
+    }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb .sep { opacity: 0.5; }
+
+    .page-header { margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; }
+    .page-title { font-size: 26px; font-weight: 700; color: var(--text-1); margin-bottom: 6px; }
+    .page-subtitle { font-size: 14px; color: var(--text-3); }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 4px;
+    }
+    .stat-label { font-size: 13px; color: var(--text-3); }
+
+    /* 筛选栏 */
+    .filter-bar {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      box-shadow: var(--shadow-sm);
+    }
+    .filter-group { display: flex; align-items: center; gap: 8px; }
+    .filter-group label { font-size: 13px; color: var(--text-2); font-weight: 600; }
+    .filter-select {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text-1);
+      background: var(--bg);
+      cursor: pointer;
+      min-width: 140px;
+    }
+    .filter-select:focus { outline: none; border-color: var(--primary); }
+    .search-input {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text-1);
+      background: var(--bg);
+      min-width: 200px;
+    }
+    .search-input:focus { outline: none; border-color: var(--primary); }
+
+    /* 项目卡片网格 */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 20px;
+    }
+
+    .project-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .project-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(2, 88, 140, 0.15);
+      border-color: var(--primary);
+    }
+
+    .project-banner {
+      height: 120px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      padding: 16px 20px;
+    }
+    .project-banner::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .project-city-badge {
+      position: relative;
+      background: rgba(255,255,255,0.25);
+      backdrop-filter: blur(8px);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .project-body {
+      padding: 20px;
+    }
+
+    .project-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 10px;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .project-desc {
+      font-size: 13px;
+      color: var(--text-3);
+      line-height: 1.6;
+      margin-bottom: 16px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .project-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .project-investment {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .project-investment small {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-3);
+    }
+
+    .project-type-tag {
+      padding: 4px 10px;
+      background: rgba(20, 184, 166, 0.1);
+      color: var(--secondary-text);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .project-detail-btn {
+      width: 100%;
+      padding: 10px;
+      margin-top: 14px;
+      background: var(--bg-alt);
+      border: none;
+      border-radius: 8px;
+      color: var(--text-2);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .project-detail-btn:hover {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    /* 弹窗 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: var(--card-bg);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 80px rgba(0,0,0,0.3);
+    }
+
+    .modal-header {
+      padding: 24px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 6px;
+    }
+    .modal-subtitle {
+      font-size: 13px;
+      color: var(--text-3);
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: var(--text-3);
+      cursor: pointer;
+      padding: 0 4px;
+      line-height: 1;
+    }
+    .modal-close:hover { color: var(--text-1); }
+
+    .modal-body { padding: 24px 28px; }
+
+    .detail-row {
+      display: flex;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-label {
+      width: 100px;
+      flex-shrink: 0;
+      font-size: 13px;
+      color: var(--text-3);
+      font-weight: 500;
+    }
+    .detail-value {
+      flex: 1;
+      font-size: 13px;
+      color: var(--text-1);
+      line-height: 1.6;
+    }
+
+    .modal-footer {
+      padding: 16px 28px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .btn-secondary {
+      padding: 8px 18px;
+      background: var(--bg-alt);
+      border: none;
+      border-radius: 8px;
+      color: var(--text-2);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-primary {
+      padding: 8px 18px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-logo"><svg viewBox="0 0 64 64" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0c4a6e"/><stop offset="0.5" stop-color="#0e7490"/><stop offset="1" stop-color="#0d9488"/></linearGradient><linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#5eead4"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#lg1)"/><g stroke="url(#lg2)" stroke-width="2.5" stroke-linecap="round" fill="none"><line x1="32" y1="10" x2="32" y2="54"/><line x1="11.7" y1="22" x2="52.3" y2="42"/><line x1="52.3" y1="22" x2="11.7" y2="42"/><path d="M32 10 L28 15 M32 10 L36 15 M32 54 L28 49 M32 54 L36 49"/><path d="M11.7 22 L13.5 28.3 M11.7 22 L18 20.2 M52.3 42 L50.5 35.7 M52.3 42 L46 43.8"/><path d="M52.3 22 L50.5 28.3 M52.3 22 L46 20.2 M11.7 42 L13.5 35.7 M11.7 42 L18 43.8"/></g><g fill="none" stroke="#fff" stroke-width="2.5"><ellipse cx="32" cy="32" rx="7" ry="4.5"/><ellipse cx="32" cy="32" rx="7" ry="4.5" transform="rotate(60 32 32)"/><ellipse cx="32" cy="32" rx="7" ry="4.5" transform="rotate(120 32 32)"/></g><circle cx="32" cy="32" r="2" fill="#fff"/></svg></div>
+      <div>
+        <div class="sb-name">湘链智图</div>
+        <div class="sb-sub">冷链数字平台</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-group-title">核心功能</div>
+      <a href="index.html" class="nav-item"><span class="nav-icon">🏠</span><span>总览看板</span></a>
+      <a href="index.html#mapSection" class="nav-item"><span class="nav-icon">🗺️</span><span>冷链地图</span></a>
+      <a href="index.html#analysis" class="nav-item"><span class="nav-icon">📊</span><span>数据洞察</span></a>
+      <a href="index.html#synergy" class="nav-item"><span class="nav-icon">🔗</span><span>主体协同</span></a>
+      <a href="index.html#simulate" class="nav-item"><span class="nav-icon">⚙️</span><span>智能模拟</span></a>
+      <div class="nav-group-title">数据中心</div>
+      <a href="data.html" class="nav-item"><span class="nav-icon">📋</span><span>产量数据</span></a>
+      <a href="projects.html" class="nav-item active"><span class="nav-icon">🏗️</span><span>冷链项目</span></a>
+      <div class="nav-group-title">系统</div>
+      <a href="about.html" class="nav-item"><span class="nav-icon">📖</span><span>项目概览</span></a>
+      <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span><span>个人中心</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-avatar" id="userAvatar">A</div>
+      <div>
+        <div class="user-name" id="userName">管理员</div>
+        <div class="user-role">系统管理员</div>
+      </div>
+      <button class="logout-btn" onclick="logout()" title="退出登录">⎋</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="breadcrumb">
+      <a href="index.html">首页</a>
+      <span class="sep">/</span>
+      <span>数据中心</span>
+      <span class="sep">/</span>
+      <span>冷链项目</span>
+    </div>
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">重点冷链项目</h1>
+        <p class="page-subtitle">湖南省代表性冷链物流项目建设情况</p>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value">9</div>
+        <div class="stat-label">骨干冷链物流基地（个）</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">12</div>
+        <div class="stat-label">产销冷链集配中心（个）</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">15</div>
+        <div class="stat-label">特色农产品冷链基地（个）</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">57.6<span style="font-size:14px;">亿</span></div>
+        <div class="stat-label">重点项目总投资（万元）</div>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label>区域：</label>
+        <select class="filter-select" id="regionFilter">
+          <option value="all">全部区域</option>
+          <option value="长株潭">长株潭</option>
+          <option value="洞庭湖">洞庭湖</option>
+          <option value="湘南">湘南</option>
+          <option value="湘西">湘西</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>类型：</label>
+        <select class="filter-select" id="typeFilter">
+          <option value="all">全部类型</option>
+          <option value="枢纽型">枢纽型</option>
+          <option value="产地型">产地型</option>
+          <option value="集散型">集散型</option>
+        </select>
+      </div>
+      <div class="filter-group" style="margin-left: auto;">
+        <input type="text" class="search-input" id="searchInput" placeholder="🔍 搜索项目名称...">
+      </div>
+    </div>
+
+    <div class="projects-grid" id="projectsGrid">
+    </div>
+  </main>
+
+  <!-- 详情弹窗 -->
+  <div class="modal-overlay" id="projectModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="modalTitle">项目名称</div>
+          <div class="modal-subtitle" id="modalSubtitle">建设地点</div>
+        </div>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal()">关闭</button>
+        <button class="btn-primary" id="followBtn" onclick="followProject()">关注项目</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const projects = [
+      {
+        id: 1,
+        name: '中国供销麻阳智慧农产品冷链物流园冷链物流中心项目',
+        city: '怀化市麻阳苗族自治县',
+        region: '湘西',
+        type: '产地型',
+        investment: '150000',
+        investmentDisp: '15.0亿元',
+        desc: '用地266亩，建设冷链物流中心、农产品交易中心，总建筑面积13.84万平方米，配套建设智慧冷链数字化平台。',
+        content: '该项目是湘西地区规模最大的农产品冷链物流园区，主要服务麻阳冰糖橙等特色林果产业。项目集成了智能化仓储管理系统、全自动分拣线、全程温控追溯平台，打造集冷链仓储、分拣加工、交易展示、物流配送于一体的现代化冷链枢纽。',
+        features: ['智慧冷链数字化平台', '全自动分拣中心', '13.84万㎡建筑面积', '266亩用地规模']
+      },
+      {
+        id: 2,
+        name: '湖南安化经济开发区龙安冷链物流园项目',
+        city: '益阳市安化县经济开发区',
+        region: '洞庭湖',
+        type: '集散型',
+        investment: '86200',
+        investmentDisp: '8.6亿元',
+        desc: '建设冷链仓储中心、农产品分拣加工中心、配套综合楼及室外附属设施，打造集冷冻冷藏、仓储配送、农产品加工、信息服务于一体的区域性冷链物流枢纽。',
+        content: '项目位于益阳安化经济开发区，依托当地黑茶、中药材、特色果蔬资源，构建区域性冷链物流集散中心。配备多温区冷库、加工车间、检测中心，服务湘中地区生鲜农产品流通。',
+        features: ['多温区冷库', '农产品分拣加工中心', '区域性冷链枢纽', '检测中心']
+      },
+      {
+        id: 3,
+        name: '红星冷链直供中心项目',
+        city: '长沙市雨花经开区',
+        region: '长株潭',
+        type: '枢纽型',
+        investment: '120000',
+        investmentDisp: '12.0亿元',
+        desc: '新建全省最大单体全自动化立体冷库，总仓储容量12万吨，配套建设长株潭农产品冷链共同配送中心、食品安全检测研发中心、智慧冷链园区信息化平台。',
+        content: '作为湖南省冷链体系的核心枢纽项目，红星冷链直供中心拥有全省最大的单体全自动化立体冷库，采用AS/RS自动化存储系统，实现冷链货物的全自动存取。项目同时承担长株潭地区农产品共同配送功能，是全省冷链物流的核心节点。',
+        features: ['12万吨仓储容量', '全自动化立体冷库', '共同配送中心', '食品安全检测研发中心']
+      },
+      {
+        id: 4,
+        name: '永州国际农产品智慧冷链物流商贸中心一期（北区）冷库项目',
+        city: '永州市零陵区',
+        region: '湘南',
+        type: '集散型',
+        investment: '78500',
+        investmentDisp: '7.9亿元',
+        desc: '建设库容13.2万立方米的低温冷藏库、冷冻库，配套建设智能化分拣中心、温控监控平台、农产品交易区，打造湘南地区生鲜冷链集散核心。',
+        content: '项目服务湘南地区柑橘、香芋等特色果蔬资源，是湘南地区最大的生鲜冷链集散中心。配备智能化分拣系统、全程温控监控平台，实现农产品从产地到销地的全程冷链追溯。',
+        features: ['13.2万立方米库容', '智能化分拣中心', '温控监控平台', '湘南冷链集散核心']
+      },
+      {
+        id: 5,
+        name: '怀化国际陆港商贸服务综合物流枢纽及配套工程（智慧冷链数字化物流中心）',
+        city: '怀化市鹤城区',
+        region: '湘西',
+        type: '枢纽型',
+        investment: '92300',
+        investmentDisp: '9.2亿元',
+        desc: '建设冷链仓库、公铁联运装卸平台、智慧冷链管控系统、配套服务设施，打造对接东盟的跨境生鲜冷链物流枢纽，承载湘西特色农产品外销冷链服务。',
+        content: '依托怀化国际陆港的公铁联运优势，打造面向东盟的跨境生鲜冷链物流枢纽。项目集成海关保税冷库、国际冷藏班列接驳站、智慧冷链管控系统，是湘西特色农产品走出去的重要通道。',
+        features: ['公铁联运', '跨境冷链', '智慧冷链管控系统', '保税冷库']
+      },
+      {
+        id: 6,
+        name: '常德市西湖管理区冷链物流基地建设项目',
+        city: '常德市西湖管理区西湖镇',
+        region: '洞庭湖',
+        type: '产地型',
+        investment: '4750',
+        investmentDisp: '4750万元',
+        desc: '新建仓储物流中心、冷链物流中心、配套用房及相关附属设施，配置生鲜预冷、冷冻冷藏、分拣配送全流程设备，服务洞庭湖区水产、果蔬生鲜产地流通。',
+        content: '项目服务洞庭湖区水产、果蔬等生鲜产品的产地流通，配备从预冷、冷藏到分拣配送的全流程冷链设备，是产地型冷链基础设施的典型代表，有效补齐基层冷链设施短板。',
+        features: ['生鲜预冷', '冷冻冷藏', '分拣配送', '产地流通']
+      }
+    ];
+
+    function renderProjects() {
+      const grid = document.getElementById('projectsGrid');
+      const region = document.getElementById('regionFilter').value;
+      const type = document.getElementById('typeFilter').value;
+      const search = document.getElementById('searchInput').value.toLowerCase();
+
+      const filtered = projects.filter(p => {
+        if (region !== 'all' && p.region !== region) return false;
+        if (type !== 'all' && p.type !== type) return false;
+        if (search && !p.name.toLowerCase().includes(search) && !p.city.toLowerCase().includes(search)) return false;
+        return true;
+      });
+
+      grid.innerHTML = '';
+      filtered.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'project-card';
+        card.onclick = () => openModal(p.id);
+        card.innerHTML = `
+          <div class="project-banner">
+            <span class="project-city-badge">📍 ${p.city.split('市')[0]}市</span>
+          </div>
+          <div class="project-body">
+            <h3 class="project-title">${p.name}</h3>
+            <p class="project-desc">${p.desc}</p>
+            <div class="project-meta">
+              <div class="project-investment">
+                ${p.investmentDisp}
+                <small>总投资</small>
+              </div>
+              <span class="project-type-tag">${p.type}</span>
+            </div>
+            <button class="project-detail-btn" onclick="event.stopPropagation(); openModal(${p.id})">
+              查看详情 →
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-3);">暂无符合条件的项目</div>';
+      }
+    }
+
+    function openModal(id) {
+      const p = projects.find(x => x.id === id);
+      if (!p) return;
+
+      document.getElementById('modalTitle').textContent = p.name;
+      document.getElementById('modalSubtitle').textContent = '📍 ' + p.city;
+
+      const featuresHtml = p.features.map(f => `<span style="display:inline-block; padding:4px 10px; margin:2px; background:rgba(14,165,233,0.1); color:var(--primary); border-radius:6px; font-size:12px;">${f}</span>`).join('');
+
+      document.getElementById('modalBody').innerHTML = `
+        <div class="detail-row">
+          <div class="detail-label">项目类型</div>
+          <div class="detail-value">${p.type} · ${p.region}片区</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">总投资</div>
+          <div class="detail-value"><strong style="color:var(--primary); font-size:16px;">${p.investmentDisp}</strong></div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">建设地点</div>
+          <div class="detail-value">${p.city}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">项目概况</div>
+          <div class="detail-value">${p.content}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">主要功能</div>
+          <div class="detail-value">${featuresHtml}</div>
+        </div>
+      `;
+
+      document.getElementById('projectModal').classList.add('active');
+
+      // 检查是否已关注
+      const followBtn = document.getElementById('followBtn');
+      let followed = [];
+      try { followed = JSON.parse(localStorage.getItem('followedProjects') || '[]'); } catch(e) {}
+      if (followed.includes(p.name)) {
+        followBtn.textContent = '已关注 ✓';
+        followBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+      } else {
+        followBtn.textContent = '关注项目';
+        followBtn.style.background = '';
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('projectModal').classList.remove('active');
+    }
+
+    function followProject() {
+      const btn = document.getElementById('followBtn');
+      let followed = [];
+      try { followed = JSON.parse(localStorage.getItem('followedProjects') || '[]'); } catch(e) {}
+
+      const modalBody = document.getElementById('modalBody');
+      const titleEl = document.getElementById('modalTitle');
+      const projectName = titleEl ? titleEl.textContent : '';
+
+      if (btn.textContent === '已关注') {
+        followed = followed.filter(n => n !== projectName);
+        try { localStorage.setItem('followedProjects', JSON.stringify(followed)); } catch(e) {}
+        btn.textContent = '关注项目';
+        btn.style.background = '';
+        showProjToast('已取消关注');
+      } else {
+        if (!followed.includes(projectName)) followed.push(projectName);
+        try { localStorage.setItem('followedProjects', JSON.stringify(followed)); } catch(e) {}
+        btn.textContent = '已关注 ✓';
+        btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        showProjToast('已加入关注列表');
+      }
+    }
+
+    function showProjToast(msg) {
+      let toast = document.getElementById('projToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'projToast';
+        toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(15,118,110,0.95);color:white;padding:12px 24px;border-radius:10px;font-size:14px;z-index:2000;opacity:0;transition:opacity 0.3s;box-shadow:0 4px 20px rgba(0,0,0,0.15);';
+        document.body.appendChild(toast);
+      }
+      toast.textContent = msg;
+      toast.style.opacity = '1';
+      setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+    }
+
+    // 筛选事件
+    document.getElementById('regionFilter').addEventListener('change', renderProjects);
+    document.getElementById('typeFilter').addEventListener('change', renderProjects);
+    document.getElementById('searchInput').addEventListener('input', renderProjects);
+
+    // 点击弹窗外部关闭
+    document.getElementById('projectModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    // 统一登录检查
+    function checkLogin() {
+      const params = new URLSearchParams(window.location.search);
+      const urlLoggedIn = params.get('loggedIn');
+      const urlUser = params.get('user');
+      let isLoggedIn = false;
+      let username = '';
+      try {
+        isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        username = localStorage.getItem('username') || '';
+      } catch(e) {}
+      if (urlLoggedIn === '1' && urlUser) {
+        isLoggedIn = true;
+        username = decodeURIComponent(urlUser);
+        try {
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('username', username);
+          localStorage.setItem('loginTime', new Date().toISOString());
+        } catch(e) {}
+      }
+      if (!isLoggedIn) {
+        window.location.href = 'login.html';
+        return false;
+      }
+      return true;
+    }
+
+    function initUser() {
+      if (!checkLogin()) return;
+      let username = localStorage.getItem('username') || '管理员';
+      try {
+        const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+        if (profile.nickname) username = profile.nickname;
+      } catch(e) {}
+      document.getElementById('userName').textContent = username;
+      document.getElementById('userAvatar').textContent = username.charAt(0).toUpperCase();
+    }
+
+    function logout() {
+      if (confirm('确定要退出登录吗？')) {
+        try {
+          localStorage.removeItem('isLoggedIn');
+          localStorage.removeItem('username');
+          localStorage.removeItem('loginTime');
+        } catch(e) {}
+        window.location.href = 'login.html';
+      }
+    }
+
+    initUser();
+    renderProjects();
+
+    // 侧边栏收起/展开
+    function toggleSidebar() {
+      const sidebar = document.getElementById('appSidebar');
+      const body = document.body;
+      sidebar.classList.toggle('collapsed');
+      body.classList.toggle('sidebar-collapsed');
+      const toggleBtn = sidebar.querySelector('.sidebar-toggle');
+      if (sidebar.classList.contains('collapsed')) {
+        toggleBtn.textContent = '»';
+        try { localStorage.setItem('sidebarCollapsed', 'true'); } catch(e) {}
+      } else {
+        toggleBtn.textContent = '«';
+        try { localStorage.setItem('sidebarCollapsed', 'false'); } catch(e) {}
+      }
+    }
+
+    // 恢复侧边栏状态
+    (function restoreSidebarState() {
+      try {
+        if (localStorage.getItem('sidebarCollapsed') === 'true') {
+          const sidebar = document.getElementById('appSidebar');
+          const body = document.body;
+          sidebar.classList.add('collapsed');
+          body.classList.add('sidebar-collapsed');
+          const toggleBtn = sidebar.querySelector('.sidebar-toggle');
+          toggleBtn.textContent = '»';
+        }
+      } catch(e) {}
+    })();
+  </script>
+</body>
+</html>

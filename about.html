@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>项目概览 · 湘链智图</title>
+  <link rel="icon" href="favicon.svg?v=2" type="image/svg+xml">
+  <link rel="stylesheet" href="colors_and_type.css?v=9">
+  <style>
+    body {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* 侧边栏 */
+    .sidebar {
+      width: 240px;
+      background: linear-gradient(180deg, #0c4a6e 0%, #0f766e 100%);
+      color: white;
+      padding: 24px 0;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      overflow-y: auto;
+      z-index: 100;
+    }
+
+    .sidebar-brand {
+      padding: 0 20px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sidebar-logo {
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .sidebar-brand-text .sb-name {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .sidebar-brand-text .sb-sub {
+      font-size: 11px;
+      opacity: 0.7;
+    }
+
+    .sidebar-nav {
+      padding: 16px 12px;
+    }
+
+    .nav-group-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: rgba(255,255,255,0.5);
+      padding: 12px 12px 8px;
+      font-weight: 600;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      font-size: 14px;
+      margin-bottom: 2px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    .nav-item.active {
+      background: rgba(255,255,255,0.18);
+      color: white;
+      font-weight: 600;
+    }
+
+    .nav-item .nav-icon {
+      font-size: 18px;
+      width: 24px;
+      text-align: center;
+    }
+
+    .sidebar-footer {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 16px 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-avatar {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #38bdf8, #5eead4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .user-info .user-name {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .user-info .user-role {
+      font-size: 11px;
+      opacity: 0.6;
+    }
+
+    .logout-btn {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.6);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    /* 主内容区 */
+    .main-content {
+      flex: 1;
+      margin-left: 240px;
+      padding: 24px 32px;
+      overflow-y: auto;
+    }
+
+    .page-header {
+      margin-bottom: 24px;
+    }
+
+    .page-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 6px;
+    }
+
+    .page-subtitle {
+      font-size: 14px;
+      color: var(--text-3);
+    }
+
+    /* 内容卡片 */
+    .content-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-title .title-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, rgba(14,165,233,0.15), rgba(20,184,166,0.15));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .card-text {
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--text-2);
+      text-align: justify;
+    }
+
+    .card-text p {
+      margin-bottom: 12px;
+    }
+
+    /* 数据指标卡片 */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 6px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-3);
+    }
+
+    /* 时间线 */
+    .timeline {
+      position: relative;
+      padding-left: 28px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px; top: 6px; bottom: 6px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--primary), var(--secondary));
+      border-radius: 2px;
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -24px; top: 6px;
+      width: 12px; height: 12px;
+      background: white;
+      border: 3px solid var(--primary);
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+    }
+
+    .timeline-year {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .timeline-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin-bottom: 6px;
+    }
+
+    .timeline-desc {
+      font-size: 13px;
+      color: var(--text-3);
+      line-height: 1.6;
+    }
+
+    /* 问题列表 */
+    .problem-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .problem-item {
+      display: flex;
+      gap: 16px;
+      padding: 18px;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(220, 38, 38, 0.03));
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      border-radius: 12px;
+    }
+
+    .problem-icon {
+      width: 44px; height: 44px;
+      background: rgba(245, 158, 11, 0.15);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .problem-content h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin-bottom: 6px;
+    }
+
+    .problem-content p {
+      font-size: 13px;
+      color: var(--text-3);
+      line-height: 1.6;
+    }
+
+    /* 面包屑 */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-3);
+      margin-bottom: 16px;
+    }
+
+    .breadcrumb a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .breadcrumb .sep {
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+  <!-- 侧边栏 -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-logo"><svg viewBox="0 0 64 64" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0c4a6e"/><stop offset="0.5" stop-color="#0e7490"/><stop offset="1" stop-color="#0d9488"/></linearGradient><linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#5eead4"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#lg1)"/><g stroke="url(#lg2)" stroke-width="2.5" stroke-linecap="round" fill="none"><line x1="32" y1="10" x2="32" y2="54"/><line x1="11.7" y1="22" x2="52.3" y2="42"/><line x1="52.3" y1="22" x2="11.7" y2="42"/><path d="M32 10 L28 15 M32 10 L36 15 M32 54 L28 49 M32 54 L36 49"/><path d="M11.7 22 L13.5 28.3 M11.7 22 L18 20.2 M52.3 42 L50.5 35.7 M52.3 42 L46 43.8"/><path d="M52.3 22 L50.5 28.3 M52.3 22 L46 20.2 M11.7 42 L13.5 35.7 M11.7 42 L18 43.8"/></g><g fill="none" stroke="#fff" stroke-width="2.5"><ellipse cx="32" cy="32" rx="7" ry="4.5"/><ellipse cx="32" cy="32" rx="7" ry="4.5" transform="rotate(60 32 32)"/><ellipse cx="32" cy="32" rx="7" ry="4.5" transform="rotate(120 32 32)"/></g><circle cx="32" cy="32" r="2" fill="#fff"/></svg></div>
+      <div class="sidebar-brand-text">
+        <div class="sb-name">湘链智图</div>
+        <div class="sb-sub">冷链数字平台</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-group-title">核心功能</div>
+      <a href="index.html" class="nav-item">
+        <span class="nav-icon">🏠</span>
+        <span>总览看板</span>
+      </a>
+      <a href="index.html#mapSection" class="nav-item">
+        <span class="nav-icon">🗺️</span>
+        <span>冷链地图</span>
+      </a>
+      <a href="index.html#analysis" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span>数据洞察</span>
+      </a>
+      <a href="index.html#synergy" class="nav-item">
+        <span class="nav-icon">🔗</span>
+        <span>主体协同</span>
+      </a>
+      <a href="index.html#simulate" class="nav-item">
+        <span class="nav-icon">⚙️</span>
+        <span>智能模拟</span>
+      </a>
+
+      <div class="nav-group-title">数据中心</div>
+      <a href="data.html" class="nav-item">
+        <span class="nav-icon">📋</span>
+        <span>产量数据</span>
+      </a>
+      <a href="projects.html" class="nav-item">
+        <span class="nav-icon">🏗️</span>
+        <span>冷链项目</span>
+      </a>
+
+      <div class="nav-group-title">系统</div>
+      <a href="about.html" class="nav-item active">
+        <span class="nav-icon">📖</span>
+        <span>项目概览</span>
+      </a>
+      <a href="profile.html" class="nav-item">
+        <span class="nav-icon">👤</span>
+        <span>个人中心</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-avatar" id="userAvatar">A</div>
+      <div class="user-info">
+        <div class="user-name" id="userName">管理员</div>
+        <div class="user-role">系统管理员</div>
+      </div>
+      <button class="logout-btn" onclick="logout()" title="退出登录">⎋</button>
+    </div>
+  </aside>
+
+  <!-- 主内容 -->
+  <main class="main-content">
+    <div class="breadcrumb">
+      <a href="index.html">首页</a>
+      <span class="sep">/</span>
+      <span>项目概览</span>
+    </div>
+
+    <div class="page-header">
+      <h1 class="page-title">项目概览</h1>
+      <p class="page-subtitle">湖南省生鲜冷链物流发展现状、问题与研究意义</p>
+    </div>
+
+    <!-- 核心指标 -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">14</div>
+        <div class="stat-label">覆盖市州数量</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">1380</div>
+        <div class="stat-label">冷库容量（万立方米）</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">4300</div>
+        <div class="stat-label">冷藏运输车（辆）</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">6900+</div>
+        <div class="stat-label">生鲜年产量（万吨）</div>
+      </div>
+    </div>
+
+    <!-- 研究背景 -->
+    <div class="content-card">
+      <h3 class="card-title">
+        <span class="title-icon">🎯</span>
+        研究背景
+      </h3>
+      <div class="card-text">
+        <p>湖南省作为南方特色农副产品核心产区，湘西猕猴桃、江永香芋、湘南杨梅、洞庭湖区鱼虾水产、全省生猪鲜肉为核心优势生鲜品类。果蔬、水产、畜禽肉类均属于易腐货品，采摘、屠宰后若无即时预冷、低温仓储保鲜处理，极易出现失水、腐烂、品质劣变问题。</p>
+        <p>省内大量生鲜农产品除本地消化外，长期向粤港澳大湾区、长三角、华北地区外销输送，远距离干线运输对全程恒温冷链有着硬性要求。现阶段果蔬产地低温处理率仅30%左右，大量鲜果依旧采用常温包装外运，损耗率偏高，产业端存在大量未被满足的前置预冷、产地仓储、干线冷藏运输刚需。</p>
+      </div>
+    </div>
+
+    <!-- 发展现状时间线 -->
+    <div class="content-card">
+      <h3 class="card-title">
+        <span class="title-icon">📈</span>
+        冷链发展历程
+      </h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-year">2021年</div>
+          <div class="timeline-title">冷链体系建设启动</div>
+          <div class="timeline-desc">《湖南省冷链物流体系建设行动方案（2022-2025年）》发布，"1+4+N+X"冷链规划布局启动，冷库容量1049.5万立方米，冷藏车2500辆。</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2022年</div>
+          <div class="timeline-title">骨干基地初步建成</div>
+          <div class="timeline-desc">国家、省级骨干冷链物流基地达2个，区域性产销冷链集配中心4个，特色农产品冷链物流基地5个，冷库容量增至1150万立方米。</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2023年</div>
+          <div class="timeline-title">多级体系基本成型</div>
+          <div class="timeline-desc">骨干冷链物流基地增至6个，集配中心8个，特色基地10个，冷库容量1260万立方米，冷藏车3700辆，冷链监控覆盖率达35%。</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2024年</div>
+          <div class="timeline-title">规模持续扩容</div>
+          <div class="timeline-desc">骨干基地达9个，冷库容量1380万立方米，冷藏车4300辆，肉类、水产品产地低温处理率达80%，果蔬27%，冷链费用占GDP比重降至0.17%。</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2025年（目标）</div>
+          <div class="timeline-title">体系全面完善</div>
+          <div class="timeline-desc">骨干冷链物流基地≥12个，冷库容量1500万立方米，冷藏车5000辆，冷链监控覆盖率≥50%，果蔬产地低温处理率达30%。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 现存问题 -->
+    <div class="content-card">
+      <h3 class="card-title">
+        <span class="title-icon">⚠️</span>
+        核心问题
+      </h3>
+      <div class="problem-list">
+        <div class="problem-item">
+          <div class="problem-icon">🏗️</div>
+          <div class="problem-content">
+            <h4>冷链基础设施结构失衡，"两端短板"突出</h4>
+            <p>设施布局与功能配置严重倾斜于城市销地与加工端，贴近田间生产端的供给明显滞后。肉类产地低温处理率已达80%，而果蔬类仅约27%。"重城市、轻产地；重加工存储、轻田间预冷"的结构性错配，制约了整体流通效益。</p>
+          </div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon">💻</div>
+          <div class="problem-content">
+            <h4>全链条数字化管控薄弱，标准化协同不足</h4>
+            <p>冷链仓储、运力节点的空间布局主要依赖行业经验，缺乏长时序、多维度数据的科学测算支撑。湘西、湘南特色果蔬产量持续攀升，但产地预冷设施建设进度明显滞后，常出现"果熟等库"的被动局面。</p>
+          </div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon">📊</div>
+          <div class="problem-content">
+            <h4>冷链资源配置缺乏数据化前瞻性量化规划</h4>
+            <p>产地端全程温控管理、标准化作业与信息协同能力薄弱。2024年全省冷链流通量纳入监控体系比例仅45%，田间预冷环节温湿度数据普遍缺失。农户采收计划、产地冷库库容与批发市场需求信息之间缺乏有效衔接。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 研究意义 -->
+    <div class="content-card">
+      <h3 class="card-title">
+        <span class="title-icon">💡</span>
+        研究意义
+      </h3>
+      <div class="card-text">
+        <p><strong>理论意义：</strong>构建修正引力-BP神经网络组合预测模型，丰富冷链物流需求预测的方法体系，为中西部省份冷链需求测算提供可借鉴的方法论框架。</p>
+        <p><strong>实践意义：</strong>精准识别湘西、湘南等果蔬主产区的设施缺口，引导财政与社会资本优先向田间预冷设施、移动式保鲜设备及产地集配节点投放，从源头补齐"最先一公里"短板，推动冷链资源与生鲜产业需求实现精准匹配。</p>
+        <p><strong>社会意义：</strong>降低生鲜农产品流通损耗，保障食品质量安全，助力乡村振兴与农民增收，支撑湖南省冷链物流体系高质量发展。</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // 统一登录检查（支持 localStorage 和 URL 参数两种方式）
+    function checkLogin() {
+      const params = new URLSearchParams(window.location.search);
+      const urlLoggedIn = params.get('loggedIn');
+      const urlUser = params.get('user');
+
+      let isLoggedIn = false;
+      let username = '';
+
+      try {
+        isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        username = localStorage.getItem('username') || '';
+      } catch(e) {}
+
+      // URL 参数登录（备用方案）
+      if (urlLoggedIn === '1' && urlUser) {
+        isLoggedIn = true;
+        username = decodeURIComponent(urlUser);
+        try {
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('username', username);
+          localStorage.setItem('loginTime', new Date().toISOString());
+        } catch(e) {}
+      }
+
+      if (!isLoggedIn) {
+        window.location.href = 'login.html';
+        return false;
+      }
+      return true;
+    }
+
+    // 读取登录状态
+    function initUser() {
+      if (!checkLogin()) return;
+      let username = localStorage.getItem('username') || '管理员';
+      try {
+        const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+        if (profile.nickname) username = profile.nickname;
+      } catch(e) {}
+      document.getElementById('userName').textContent = username;
+      document.getElementById('userAvatar').textContent = username.charAt(0).toUpperCase();
+    }
+
+    function logout() {
+      if (confirm('确定要退出登录吗？')) {
+        try {
+          localStorage.removeItem('isLoggedIn');
+          localStorage.removeItem('username');
+          localStorage.removeItem('loginTime');
+        } catch(e) {}
+        window.location.href = 'login.html';
+      }
+    }
+
+    initUser();
+
+    // 侧边栏收起/展开
+    function toggleSidebar() {
+      const sidebar = document.getElementById('appSidebar');
+      const body = document.body;
+      sidebar.classList.toggle('collapsed');
+      body.classList.toggle('sidebar-collapsed');
+      const toggleBtn = sidebar.querySelector('.sidebar-toggle');
+      if (sidebar.classList.contains('collapsed')) {
+        toggleBtn.textContent = '»';
+        try { localStorage.setItem('sidebarCollapsed', 'true'); } catch(e) {}
+      } else {
+        toggleBtn.textContent = '«';
+        try { localStorage.setItem('sidebarCollapsed', 'false'); } catch(e) {}
+      }
+    }
+
+    // 恢复侧边栏状态
+    (function restoreSidebarState() {
+      try {
+        if (localStorage.getItem('sidebarCollapsed') === 'true') {
+          const sidebar = document.getElementById('appSidebar');
+          const body = document.body;
+          sidebar.classList.add('collapsed');
+          body.classList.add('sidebar-collapsed');
+          const toggleBtn = sidebar.querySelector('.sidebar-toggle');
+          toggleBtn.textContent = '»';
+        }
+      } catch(e) {}
+    })();
+  </script>
+</body>
+</html>

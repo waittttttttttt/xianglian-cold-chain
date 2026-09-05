@@ -1,0 +1,24 @@
+{
+  "note": "可共享资源池（演示占位数据，待团队真实数据替换）。打破信息壁垒的最小数据集：只要不涉及隐私，冷库余容、闲置运力、参考运价就应当公开。字段契约：type=coldstore|carrier|farmer|market；冷库=capacityWanTons(总容量)/usedWanTons(已占用)/priceYuanPerTonDay(仓储费)；承运商=vehiclesTotal/vehiclesIdle/ratePerTonKm；农户=product/seasonalSupplyTons；市场=dailyThroughputTons",
+  "updatedAt": "2026-08-26",
+  "resources": [
+    { "id": "CS-HUB-01", "type": "coldstore", "name": "红星冷链集配中心",   "cityId": "CS",  "capacityWanTons": 30, "usedWanTons": 22, "priceYuanPerTonDay": 45 },
+    { "id": "YY-HUB-01", "type": "coldstore", "name": "岳阳城陵矶冷链码头", "cityId": "YY",  "capacityWanTons": 25, "usedWanTons": 15, "priceYuanPerTonDay": 40 },
+    { "id": "HH-HUB-01", "type": "coldstore", "name": "怀化冷链物流基地",   "cityId": "HH",  "capacityWanTons": 18, "usedWanTons": 11, "priceYuanPerTonDay": 38 },
+    { "id": "ZZ-HUB-01", "type": "coldstore", "name": "株洲农产品冷链园",   "cityId": "ZZ",  "capacityWanTons": 12, "usedWanTons": 7,  "priceYuanPerTonDay": 42 },
+    { "id": "CD-HUB-01", "type": "coldstore", "name": "常德甘露寺冷链园",   "cityId": "CD",  "capacityWanTons": 15, "usedWanTons": 9,  "priceYuanPerTonDay": 36 },
+    { "id": "YIY-HUB-01","type": "coldstore", "name": "益阳水产冷链中心",   "cityId": "YIY", "capacityWanTons": 10, "usedWanTons": 4,  "priceYuanPerTonDay": 44 },
+    { "id": "LD-HUB-01", "type": "coldstore", "name": "娄底冷链集配点",     "cityId": "LD",  "capacityWanTons": 5,  "usedWanTons": 3,  "priceYuanPerTonDay": 50 },
+    { "id": "CS-CARR-01","type": "carrier",   "name": "长湘冷链运输车队",   "cityId": "CS",  "vehiclesTotal": 60, "vehiclesIdle": 18, "ratePerTonKm": 0.88 },
+    { "id": "YY-CARR-01","type": "carrier",   "name": "洞庭水产冷链车队",   "cityId": "YY",  "vehiclesTotal": 45, "vehiclesIdle": 16, "ratePerTonKm": 0.95 },
+    { "id": "HY-CARR-01","type": "carrier",   "name": "衡邵干线冷藏车队",   "cityId": "HY",  "vehiclesTotal": 38, "vehiclesIdle": 9,  "ratePerTonKm": 0.82 },
+    { "id": "HH-CARR-01","type": "carrier",   "name": "怀化东盟班列冷链队", "cityId": "HH",  "vehiclesTotal": 40, "vehiclesIdle": 12, "ratePerTonKm": 0.78 },
+    { "id": "CS-FARM-01","type": "farmer",    "name": "长沙县蔬菜合作社",   "cityId": "CS",  "product": "蔬菜",   "seasonalSupplyTons": 1200 },
+    { "id": "XX-FARM-01","type": "farmer",    "name": "湘西猕猴桃合作社",   "cityId": "XX",  "product": "猕猴桃", "seasonalSupplyTons": 800 },
+    { "id": "SY-FARM-01","type": "farmer",    "name": "邵阳果蔬产地合作社", "cityId": "SY",  "product": "果蔬",   "seasonalSupplyTons": 1500 },
+    { "id": "CD-FARM-01","type": "farmer",    "name": "澧县葡萄合作社",     "cityId": "CD",  "product": "葡萄",   "seasonalSupplyTons": 600 },
+    { "id": "CS-MKT-01", "type": "market",    "name": "马王堆生鲜市场",     "cityId": "CS",  "dailyThroughputTons": 2600 },
+    { "id": "YY-MKT-01", "type": "market",    "name": "岳阳海吉星市场",     "cityId": "YY",  "dailyThroughputTons": 1400 },
+    { "id": "ZZ-MKT-01", "type": "market",    "name": "中南果蔬大市场",     "cityId": "ZZ",  "dailyThroughputTons": 1100 }
+  ]
+}

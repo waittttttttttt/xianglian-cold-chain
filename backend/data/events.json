@@ -1,0 +1,33 @@
+{
+  "note": "断链预警事件流（演示占位数据，正式版由团队 IoT/模型输出替换）。字段契约：timeISO=ISO8601 时间；severity=warn|info；fromCityId/toCityId 引用 cities.json 的 id；tempC/limitC=实测与限温；advice=处置建议",
+  "events": [
+    { "id": "E-0001", "timeISO": "2026-08-26T09:42:00+08:00", "type": "temp-break", "severity": "warn",
+      "fromCityId": "HH", "toCityId": "CS", "productKey": "fruitveg",
+      "tempC": 9.4, "limitC": 8, "durationMin": 23,
+      "message": "怀化→长沙 干线车厢温度超限 23 分钟", "advice": "建议就近驶入娄底集配点中转预冷" },
+    { "id": "E-0002", "timeISO": "2026-08-26T09:05:00+08:00", "type": "door-open", "severity": "warn",
+      "fromCityId": "YY", "toCityId": "CS", "productKey": "aquatic",
+      "tempC": 2.1, "limitC": 0, "durationMin": 11,
+      "message": "岳阳→长沙 水产线厢门异常开启 11 分钟", "advice": "核对装卸交接单据，复核温控记录仪" },
+    { "id": "E-0003", "timeISO": "2026-08-26T08:31:00+08:00", "type": "temp-break", "severity": "warn",
+      "fromCityId": "CD", "toCityId": "ZZ", "productKey": "fruitveg",
+      "tempC": 12.6, "limitC": 10, "durationMin": 17,
+      "message": "常德→株洲 果蔬线超温 17 分钟", "advice": "抵达后优先分拨至株洲冷链园预冷暂存" },
+    { "id": "E-0004", "timeISO": "2026-08-26T07:58:00+08:00", "type": "device-offline", "severity": "info",
+      "fromCityId": "XX", "toCityId": "HH", "productKey": "fruitveg",
+      "message": "湘西→怀化 猕猴桃线温控设备离线 6 分钟后恢复", "advice": "发车前检查设备供电与SIM卡状态" },
+    { "id": "E-0005", "timeISO": "2026-08-26T07:20:00+08:00", "type": "temp-break", "severity": "warn",
+      "fromCityId": "CS", "toCityId": "YY", "productKey": "meat",
+      "tempC": -14.2, "limitC": -15, "durationMin": 25,
+      "message": "长沙→岳阳 肉制品线温度回升越限 25 分钟", "advice": "建议途中加装保温帘并复测出风口温度" },
+    { "id": "E-0006", "timeISO": "2026-08-26T06:44:00+08:00", "type": "delay", "severity": "info",
+      "fromCityId": "YIY", "toCityId": "CS", "productKey": "aquatic",
+      "message": "益阳→长沙 水产线因高速管制延误 40 分钟", "advice": "通知收货方延后交割，评估增氧措施" },
+    { "id": "E-0007", "timeISO": "2026-08-26T06:10:00+08:00", "type": "handover-missing", "severity": "warn",
+      "fromCityId": "HY", "toCityId": "SY", "productKey": "fruitveg",
+      "message": "衡阳→邵阳 香芋线交接温控记录缺失", "advice": "补录交接单，纳入承运商考核" },
+    { "id": "E-0008", "timeISO": "2026-08-26T05:35:00+08:00", "type": "temp-ok", "severity": "info",
+      "fromCityId": "CD", "toCityId": "CS", "productKey": "vegetable",
+      "message": "常德→长沙 蔬菜线全程温控达标", "advice": "保持当前作业标准" }
+  ]
+}

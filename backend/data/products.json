@@ -1,0 +1,9 @@
+{
+  "note": "生鲜品类冷链参数（演示占位值，待团队实测费率替换）。字段契约：key=前端模拟器引用键；tempZone=运输温区；ratePerTonKm=干线运费率(元/吨公里)；handlingFee=单端冷库装卸费(元)；avgSpeedKmh=冷藏车均速；lossBase=基础损耗率(全程占比)；unitPriceYuan=货值(元/吨,用于折算损耗金额)；riskBase=温控断链基础风险(%)；reeferLoad=制冷机组额外油耗比例",
+  "products": [
+    { "key": "aquatic",  "label": "水产类", "tempZone": "-18℃ 以下",    "ratePerTonKm": 0.88, "handlingFee": 350, "avgSpeedKmh": 56, "lossBase": 0.018, "unitPriceYuan": 18000, "riskBase": 4, "reeferLoad": 0.35 },
+    { "key": "meat",     "label": "肉禽类", "tempZone": "-15℃ ~ -18℃", "ratePerTonKm": 0.78, "handlingFee": 300, "avgSpeedKmh": 58, "lossBase": 0.012, "unitPriceYuan": 12000, "riskBase": 3, "reeferLoad": 0.30 },
+    { "key": "dairy",    "label": "乳制品", "tempZone": "2℃ ~ 6℃",      "ratePerTonKm": 0.62, "handlingFee": 260, "avgSpeedKmh": 60, "lossBase": 0.006, "unitPriceYuan": 9000,  "riskBase": 2, "reeferLoad": 0.25 },
+    { "key": "fruitveg", "label": "果蔬类", "tempZone": "0℃ ~ 8℃",      "ratePerTonKm": 0.52, "handlingFee": 220, "avgSpeedKmh": 58, "lossBase": 0.065, "unitPriceYuan": 4500,  "riskBase": 2, "reeferLoad": 0.22 }
+  ]
+}

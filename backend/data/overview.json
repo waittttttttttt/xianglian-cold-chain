@@ -1,61 +1,13 @@
 {
-  "brand": {
-    "name": "湘链智图",
-    "subtitle": "湖南省物流规划数字平台"
-  },
-  "tagline": "产业端 × 物流端 × 销售端 三端协同的智慧物流规划中枢",
-  "description": "围绕湖南省域物流体系，贯通产业需求、物流组织与销售履约三大环节，提供网络布局、走廊规划与智能调度的可视化决策支持。",
+  "note": "全省冷链 KPI 总览（演示占位值，待团队真实数据替换）；dir: up=利好上行, down-good=下降为优",
   "kpis": [
-    {
-      "label": "社会物流总额",
-      "value": 158600,
-      "unit": "亿元",
-      "delta": "+5.8%",
-      "dir": "up"
-    },
-    {
-      "label": "物流业总收入",
-      "value": 4320,
-      "unit": "亿元",
-      "delta": "+6.2%",
-      "dir": "up"
-    },
-    {
-      "label": "物流费用占GDP比",
-      "value": 13.9,
-      "unit": "%",
-      "delta": "-0.4pct",
-      "dir": "down-good"
-    },
-    {
-      "label": "A级以上物流企业",
-      "value": 382,
-      "unit": "家",
-      "delta": "+24家",
-      "dir": "up"
-    },
-    {
-      "label": "快递业务量",
-      "value": 41.2,
-      "unit": "亿件",
-      "delta": "+18.5%",
-      "dir": "up"
-    },
-    {
-      "label": "多式联运占比",
-      "value": 32.5,
-      "unit": "%",
-      "delta": "+1.8pct",
-      "dir": "up"
-    }
+    { "label": "冷库总容量", "value": 553, "unit": "万吨位", "delta": "+8.3%", "dir": "up" },
+    { "label": "冷藏车保有量", "value": 1.5, "unit": "万辆", "delta": "+12.5%", "dir": "up" },
+    { "label": "生鲜年产量", "value": 722, "unit": "万吨", "delta": "+3.8%", "dir": "up" },
+    { "label": "冷链流通率", "value": 30, "unit": "%", "delta": "+1.8pt", "dir": "up" },
+    { "label": "综合损耗率", "value": 8.7, "unit": "%", "delta": "-0.6pt", "dir": "down-good" }
   ],
-  "networkStats": {
-    "hubs": 7,
-    "cityCenters": 8,
-    "countyStations": 4,
-    "trunkRoutes": 6,
-    "feederRoutes": 4
-  },
+  "description": "聚焦湖南省 14 个市州的生鲜农产品冷链运输体系：从产地冷源、干线冷藏运输到市域分拨，提供运力布局、成本时效与断链风险的模拟决策支持。",
   "updated": "2026-08",
   "disclaimer": "页面数值为演示占位数据，正式参赛时将替换为真实模型测算结果。"
 }

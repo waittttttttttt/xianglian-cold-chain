@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登录 · 湘链智图</title>
+  <link rel="icon" href="favicon.svg?v=2" type="image/svg+xml">
+  <link rel="stylesheet" href="colors_and_type.css?v=9">
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #e0f2fe 0%, #ccfbf1 50%, #e0f2fe 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 背景装饰：冷链粒子动画 */
+    .bg-particles {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .particle {
+      position: absolute;
+      width: 8px; height: 8px;
+      background: rgba(14, 165, 233, 0.3);
+      border-radius: 50%;
+      animation: float 15s infinite ease-in-out;
+    }
+    .particle:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; width: 12px; height: 12px; }
+    .particle:nth-child(2) { top: 20%; left: 80%; animation-delay: 2s; width: 6px; height: 6px; }
+    .particle:nth-child(3) { top: 60%; left: 15%; animation-delay: 4s; width: 10px; height: 10px; }
+    .particle:nth-child(4) { top: 80%; left: 70%; animation-delay: 1s; width: 8px; height: 8px; }
+    .particle:nth-child(5) { top: 30%; left: 50%; animation-delay: 3s; width: 14px; height: 14px; background: rgba(20, 184, 166, 0.3); }
+    .particle:nth-child(6) { top: 70%; left: 40%; animation-delay: 5s; width: 7px; height: 7px; background: rgba(20, 184, 166, 0.25); }
+    .particle:nth-child(7) { top: 15%; left: 65%; animation-delay: 2.5s; width: 9px; height: 9px; }
+    .particle:nth-child(8) { top: 85%; left: 25%; animation-delay: 4.5s; width: 11px; height: 11px; background: rgba(20, 184, 166, 0.3); }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) translateX(0); opacity: 0.5; }
+      50% { transform: translateY(-30px) translateX(15px); opacity: 0.8; }
+    }
+
+    /* 雪花线条装饰 */
+    .snow-lines {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      opacity: 0.08;
+    }
+    .snow-lines::before, .snow-lines::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 600px; height: 600px;
+      border: 2px solid #0ea5e9;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .snow-lines::after {
+      width: 400px; height: 400px;
+      border-color: #14b8a6;
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    .login-container {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      width: 900px;
+      max-width: 95vw;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 25px 80px rgba(2, 88, 140, 0.18);
+      overflow: hidden;
+    }
+
+    /* 左侧品牌区 */
+    .login-brand {
+      flex: 1;
+      background: linear-gradient(160deg, #0ea5e9 0%, #14b8a6 100%);
+      padding: 50px 40px;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 560px;
+    }
+
+    .brand-logo-big {
+      width: 80px; height: 80px;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+
+    .login-brand h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+
+    .login-brand .brand-subtitle {
+      font-size: 15px;
+      opacity: 0.9;
+      line-height: 1.7;
+    }
+
+    .brand-features {
+      margin-top: 40px;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .feature-icon {
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 18px;
+    }
+
+    .feature-text h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .feature-text p {
+      font-size: 12px;
+      opacity: 0.8;
+      line-height: 1.5;
+    }
+
+    .brand-footer {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    /* 右侧表单区 */
+    .login-form-wrap {
+      flex: 1;
+      padding: 50px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .form-header {
+      margin-bottom: 36px;
+    }
+
+    .form-header h2 {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 8px;
+    }
+
+    .form-header p {
+      font-size: 14px;
+      color: var(--text-3);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-2);
+      margin-bottom: 8px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-3);
+      font-size: 16px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px 12px 44px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+      color: var(--text-1);
+      background: var(--bg);
+      transition: all 0.25s ease;
+      box-sizing: border-box;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+    }
+
+    .form-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      font-size: 13px;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-2);
+      cursor: pointer;
+    }
+
+    .remember-me input[type="checkbox"] {
+      width: 16px; height: 16px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .forgot-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .forgot-link:hover {
+      text-decoration: underline;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #0ea5e9, #14b8a6);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+    }
+
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 28px 0;
+      color: var(--text-3);
+      font-size: 12px;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .quick-access {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .quick-btn {
+      flex: 1;
+      padding: 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 13px;
+      color: var(--text-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .quick-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: #f0f9ff;
+    }
+
+    .register-tip {
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-3);
+    }
+
+    .register-tip a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .register-tip a:hover {
+      text-decoration: underline;
+    }
+
+    /* 注册表单 */
+    .register-form { display: none; }
+    .login-form-wrap.register-mode .login-form { display: none; }
+    .login-form-wrap.register-mode .register-form { display: block; }
+
+    .form-switch {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 13px;
+      color: var(--text-3);
+    }
+    .form-switch a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .form-switch a:hover { text-decoration: underline; }
+
+    .password-strength {
+      height: 4px;
+      border-radius: 2px;
+      margin-top: 6px;
+      transition: all 0.3s;
+      background: var(--border);
+    }
+    .password-strength.weak { background: #ef4444; }
+    .password-strength.medium { background: #f59e0b; }
+    .password-strength.strong { background: #10b981; }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .login-container {
+        flex-direction: column;
+        width: 95vw;
+      }
+      .login-brand {
+        min-height: auto;
+        padding: 32px 28px;
+      }
+      .login-brand h1 {
+        font-size: 24px;
+      }
+      .brand-features {
+        display: none;
+      }
+      .login-form-wrap {
+        padding: 36px 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+  <div class="snow-lines"></div>
+
+  <div class="login-container">
+    <!-- 左侧品牌区 -->
+    <div class="login-brand">
+      <div>
+        <div class="brand-logo-big"><svg viewBox="0 0 64 64" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0c4a6e"/><stop offset="0.5" stop-color="#0e7490"/><stop offset="1" stop-color="#0d9488"/></linearGradient><linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#5eead4"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#lg1)"/><g stroke="url(#lg2)" stroke-width="2.5" stroke-linecap="round" fill="none"><line x1="32" y1="10" x2="32" y2="54"/><line x1="11.7" y1="22" x2="52.3" y2="42"/><line x1="52.3" y1="22" x2="11.7" y2="42"/><path d="M32 10 L28 15 M32 10 L36 15 M32 54 L28 49 M32 54 L36 49"/><path d="M11.7 22 L13.5 28.3 M11.7 22 L18 20.2 M52.3 42 L50.5 35.7 M52.3 42 L46 43.8"/><path d="M52.3 22 L50.5 28.3 M52.3 22 L46 20.2 M11.7 42 L13.5 35.7 M11.7 42 L18 43.8"/></g><g fill="none" stroke="#fff" stroke-width="2.5"><ellipse cx="32" cy="32" rx="7" ry="4.5"/><ellipse cx="32" cy="32" rx="7" ry="4.5" transform="rotate(60 32 32)"/><ellipse cx="32" cy="32" rx="7" ry="4.5" transform="rotate(120 32 32)"/></g><circle cx="32" cy="32" r="2" fill="#fff"/></svg></div>
+        <h1>湘链智图</h1>
+        <p class="brand-subtitle">湖南省市州生鲜冷链运输数字平台<br>让冷链看得见，让决策有依据</p>
+
+        <div class="brand-features">
+          <div class="feature-item">
+            <div class="feature-icon">🗺️</div>
+            <div class="feature-text">
+              <h4>全域冷链地图</h4>
+              <p>覆盖湖南14个市州冷库、运力、流通数据可视化</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📊</div>
+            <div class="feature-text">
+              <h4>智能需求预测</h4>
+              <p>修正引力-BP模型精准预测各区域冷链需求</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🚚</div>
+            <div class="feature-text">
+              <h4>运输模拟仿真</h4>
+              <p>成本、时效、温控、损耗多维度实时测算</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="brand-footer">
+        第十一届湖南省大学生现代物流设计竞赛 · 参赛作品
+      </div>
+    </div>
+
+    <!-- 右侧表单区 -->
+    <div class="login-form-wrap" id="formWrap">
+      <!-- 登录表单 -->
+      <div class="login-form">
+        <div class="form-header">
+          <h2>欢迎回来</h2>
+          <p>登录您的账号，进入冷链数字平台</p>
+        </div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="username">账号</label>
+            <div class="input-wrap">
+              <span class="input-icon">👤</span>
+              <input type="text" id="username" class="form-input" placeholder="请输入用户名" value="admin">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">密码</label>
+            <div class="input-wrap">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="password" class="form-input" placeholder="请输入密码" value="123456">
+            </div>
+          </div>
+
+          <div class="form-options">
+            <label class="remember-me">
+              <input type="checkbox" checked>
+              <span>记住密码</span>
+            </label>
+            <a href="#" class="forgot-link" onclick="alert('请联系系统管理员重置密码'); return false;">忘记密码？</a>
+          </div>
+
+          <button type="submit" class="btn-login">登 录</button>
+
+          <div class="divider">其他登录方式</div>
+
+          <div class="quick-access">
+            <button type="button" class="quick-btn" onclick="quickLogin('visitor')">
+              <span>👁️</span> 游客体验
+            </button>
+            <button type="button" class="quick-btn" onclick="quickLogin('demo')">
+              <span>🎯</span> 演示账号
+            </button>
+          </div>
+
+          <p class="register-tip">
+            还没有账号？<a onclick="switchToRegister()">立即注册</a>
+          </p>
+        </form>
+      </div>
+
+      <!-- 注册表单 -->
+      <div class="register-form">
+        <div class="form-header">
+          <h2>创建账号</h2>
+          <p>注册后即可使用冷链数字平台全部功能</p>
+        </div>
+
+        <form id="registerForm" onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label for="regUsername">用户名</label>
+            <div class="input-wrap">
+              <span class="input-icon">👤</span>
+              <input type="text" id="regUsername" class="form-input" placeholder="3-20位字母/数字/中文" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="regNickname">昵称</label>
+            <div class="input-wrap">
+              <span class="input-icon">🏷️</span>
+              <input type="text" id="regNickname" class="form-input" placeholder="显示在系统中的名称" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="regPassword">密码</label>
+            <div class="input-wrap">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="regPassword" class="form-input" placeholder="至少6位密码" required oninput="checkPasswordStrength()">
+            </div>
+            <div class="password-strength" id="pwdStrength"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="regConfirm">确认密码</label>
+            <div class="input-wrap">
+              <span class="input-icon">🔐</span>
+              <input type="password" id="regConfirm" class="form-input" placeholder="再次输入密码" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-login" style="margin-top: 8px;">注 册</button>
+
+          <div class="form-switch">
+            已有账号？<a onclick="switchToLogin()">返回登录</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 错误提示
+    function showError(msg) {
+      let tip = document.getElementById('loginErrorTip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'loginErrorTip';
+        tip.style.cssText = 'background:rgba(220,38,38,0.1);color:#dc2626;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;border:1px solid rgba(220,38,38,0.2);display:none;';
+        const formHeader = document.querySelector('.login-form .form-header');
+        formHeader.parentNode.insertBefore(tip, formHeader.nextSibling);
+      }
+      tip.textContent = '⚠️ ' + msg;
+      tip.style.display = 'block';
+      setTimeout(() => { tip.style.display = 'none'; }, 3000);
+    }
+
+    function showSuccess(msg) {
+      let tip = document.getElementById('loginSuccessTip');
+      if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'loginSuccessTip';
+        tip.style.cssText = 'background:rgba(16,185,129,0.1);color:#10b981;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;border:1px solid rgba(16,185,129,0.2);display:none;';
+        const formHeader = document.querySelector('.register-form .form-header');
+        formHeader.parentNode.insertBefore(tip, formHeader.nextSibling);
+      }
+      tip.textContent = '✓ ' + msg;
+      tip.style.display = 'block';
+      setTimeout(() => { tip.style.display = 'none'; }, 3000);
+    }
+
+    // 切换登录/注册
+    function switchToRegister() {
+      document.getElementById('formWrap').classList.add('register-mode');
+      document.getElementById('loginErrorTip')?.remove();
+    }
+
+    function switchToLogin() {
+      document.getElementById('formWrap').classList.remove('register-mode');
+      document.getElementById('loginSuccessTip')?.remove();
+    }
+
+    // 密码强度检测
+    function checkPasswordStrength() {
+      const pwd = document.getElementById('regPassword').value;
+      const bar = document.getElementById('pwdStrength');
+      bar.className = 'password-strength';
+      if (pwd.length < 6) { bar.classList.add('weak'); return; }
+      let score = 0;
+      if (pwd.length >= 8) score++;
+      if (/[A-Z]/.test(pwd)) score++;
+      if (/[0-9]/.test(pwd)) score++;
+      if (/[^A-Za-z0-9]/.test(pwd)) score++;
+      if (score <= 1) bar.classList.add('weak');
+      else if (score <= 2) bar.classList.add('medium');
+      else bar.classList.add('strong');
+    }
+
+    // 注册
+    function handleRegister(e) {
+      e.preventDefault();
+      const username = document.getElementById('regUsername').value.trim();
+      const nickname = document.getElementById('regNickname').value.trim();
+      const password = document.getElementById('regPassword').value;
+      const confirm = document.getElementById('regConfirm').value;
+
+      if (username.length < 3) { showError('用户名至少3个字符'); return; }
+      if (username.length > 20) { showError('用户名最多20个字符'); return; }
+      if (!nickname) { showError('请输入昵称'); return; }
+      if (password.length < 6) { showError('密码至少6位'); return; }
+      if (password !== confirm) { showError('两次密码不一致'); return; }
+
+      // 检查用户名是否已存在
+      let users = [];
+      try { users = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) {}
+      if (users.some(u => u.username === username)) {
+        showError('该用户名已被注册');
+        return;
+      }
+      // admin 是保留用户名
+      if (username.toLowerCase() === 'admin') {
+        showError('admin 是系统保留用户名，请换一个');
+        return;
+      }
+
+      // 保存新用户
+      const newUser = { username, password, nickname, email: '', phone: '', org: '' };
+      users.push(newUser);
+      try {
+        localStorage.setItem('registeredUsers', JSON.stringify(users));
+        // 同步保存个人信息到 profile
+        localStorage.setItem('userProfile', JSON.stringify({
+          nickname, email: '', phone: '', org: ''
+        }));
+      } catch(e) {}
+
+      const btn = e.target.querySelector('.btn-login');
+      btn.disabled = true;
+      btn.textContent = '注册中...';
+      btn.style.opacity = '0.7';
+
+      showSuccess('注册成功！正在自动登录...');
+
+      // 自动登录
+      setTimeout(() => {
+        try {
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('username', nickname);
+          localStorage.setItem('loginUser', username);
+          localStorage.setItem('loginTime', new Date().toISOString());
+          window.location.href = 'index.html';
+        } catch(err) {
+          window.location.href = 'index.html?loggedIn=1&user=' + encodeURIComponent(nickname);
+        }
+      }, 1000);
+    }
+
+    // 登录
+    function handleLogin(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!username) { showError('请输入账号'); return; }
+      if (!password) { showError('请输入密码'); return; }
+
+      // 验证：先查注册用户，再查默认 admin
+      let loginOk = false;
+      let displayName = username;
+
+      if (username === 'admin' && password === '123456') {
+        loginOk = true;
+        displayName = '管理员';
+      } else {
+        let users = [];
+        try { users = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) {}
+        const found = users.find(u => u.username === username && u.password === password);
+        if (found) {
+          loginOk = true;
+          displayName = found.nickname || found.username;
+          // 同步 profile
+          try {
+            localStorage.setItem('userProfile', JSON.stringify({
+              nickname: found.nickname,
+              email: found.email || '',
+              phone: found.phone || '',
+              org: found.org || ''
+            }));
+          } catch(e) {}
+        }
+      }
+
+      if (!loginOk) {
+        showError('账号或密码错误');
+        return;
+      }
+
+      const btn = e.target.querySelector('.btn-login');
+      btn.disabled = true;
+      btn.textContent = '登录中...';
+      btn.style.opacity = '0.7';
+
+      setTimeout(() => {
+        try {
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('username', displayName);
+          localStorage.setItem('loginUser', username);
+          localStorage.setItem('loginTime', new Date().toISOString());
+          window.location.href = 'index.html';
+        } catch(err) {
+          window.location.href = 'index.html?loggedIn=1&user=' + encodeURIComponent(displayName);
+        }
+      }, 600);
+    }
+
+    function quickLogin(type) {
+      const username = type === 'visitor' ? '游客' : '演示用户';
+      try {
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('username', username);
+        localStorage.setItem('loginTime', new Date().toISOString());
+        window.location.href = 'index.html';
+      } catch(err) {
+        window.location.href = 'index.html?loggedIn=1&user=' + encodeURIComponent(username);
+      }
+    }
+
+    // 回车键登录
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        if (document.getElementById('formWrap').classList.contains('register-mode')) {
+          const form = document.getElementById('registerForm');
+          if (form) form.dispatchEvent(new Event('submit'));
+        } else {
+          const form = document.getElementById('loginForm');
+          if (form) form.dispatchEvent(new Event('submit'));
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>产量数据 · 湘链智图</title>
+  <link rel="icon" href="favicon.svg?v=2" type="image/svg+xml">
+  <link rel="stylesheet" href="colors_and_type.css?v=9">
+  <style>
+    body { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 240px;
+      background: linear-gradient(180deg, #0c4a6e 0%, #0f766e 100%);
+      color: white;
+      padding: 24px 0;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      overflow-y: auto;
+      z-index: 100;
+    }
+
+    .sidebar-brand {
+      padding: 0 20px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .sidebar-logo {
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .sb-name { font-size: 16px; font-weight: 700; }
+    .sb-sub { font-size: 11px; opacity: 0.7; }
+
+    .sidebar-nav { padding: 16px 12px; }
+    .nav-group-title {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+      color: rgba(255,255,255,0.5);
+      padding: 12px 12px 8px; font-weight: 600;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 10px;
+      color: rgba(255,255,255,0.75);
+      text-decoration: none; font-size: 14px;
+      margin-bottom: 2px; transition: all 0.2s ease; cursor: pointer;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.1); color: white; }
+    .nav-item.active { background: rgba(255,255,255,0.18); color: white; font-weight: 600; }
+    .nav-icon { font-size: 18px; width: 24px; text-align: center; }
+
+    .sidebar-footer {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 16px 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .user-avatar {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #38bdf8, #5eead4);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 14px;
+    }
+    .user-name { font-size: 13px; font-weight: 600; }
+    .user-role { font-size: 11px; opacity: 0.6; }
+    .logout-btn {
+      margin-left: auto; background: none; border: none;
+      color: rgba(255,255,255,0.6); cursor: pointer;
+      font-size: 16px; padding: 4px 8px; border-radius: 6px; transition: all 0.2s;
+    }
+    .logout-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+
+    .main-content {
+      flex: 1; margin-left: 240px;
+      padding: 24px 32px; overflow-y: auto;
+    }
+
+    .breadcrumb {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--text-3); margin-bottom: 16px;
+    }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb .sep { opacity: 0.5; }
+
+    .page-header { margin-bottom: 24px; }
+    .page-title { font-size: 26px; font-weight: 700; color: var(--text-1); margin-bottom: 6px; }
+    .page-subtitle { font-size: 14px; color: var(--text-3); }
+
+    /* 筛选栏 */
+    .filter-bar {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .filter-group {
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .filter-group label {
+      font-size: 13px; color: var(--text-2); font-weight: 600;
+    }
+
+    .filter-select {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text-1);
+      background: var(--bg);
+      cursor: pointer;
+      min-width: 120px;
+    }
+    .filter-select:focus { outline: none; border-color: var(--primary); }
+
+    .btn-export {
+      margin-left: auto;
+      padding: 8px 16px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-export:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(14,165,233,0.3); }
+
+    /* 数据表格 */
+    .table-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .table-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .table-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .table-title .title-icon {
+      width: 30px; height: 30px;
+      background: linear-gradient(135deg, rgba(14,165,233,0.15), rgba(20,184,166,0.15));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+    }
+
+    .table-summary {
+      font-size: 12px;
+      color: var(--text-3);
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .data-table th {
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-2);
+      background: var(--bg-alt);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--text-1);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-table tbody tr:hover {
+      background: rgba(14, 165, 233, 0.04);
+    }
+
+    .data-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .data-table .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px; height: 24px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .rank-1 { background: #fef3c7; color: #d97706; }
+    .rank-2 { background: #e5e7eb; color: #6b7280; }
+    .rank-3 { background: #fed7aa; color: #c2410c; }
+    .rank-other { background: var(--bg-alt); color: var(--text-3); }
+
+    .growth-positive {
+      color: #059669;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .growth-negative {
+      color: #dc2626;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* 分页 */
+    .pagination {
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+    }
+
+    .page-info {
+      font-size: 13px;
+      color: var(--text-3);
+    }
+
+    .page-buttons {
+      display: flex;
+      gap: 6px;
+    }
+
+    .page-btn {
+      width: 32px; height: 32px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-2);
+      transition: all 0.2s;
+    }
+    .page-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .page-btn.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white; border-color: transparent;
+    }
+
+    /* 标签切换 */
+    .tab-bar {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 20px;
+      background: var(--bg-alt);
+      padding: 4px;
+      border-radius: 12px;
+      width: fit-content;
+    }
+
+    .tab-btn {
+      padding: 8px 20px;
+      border: none;
+      background: transparent;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-3);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover { color: var(--text-1); }
+    .tab-btn.active {
+      background: var(--card-bg);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-logo"><svg viewBox="0 0 64 64" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0c4a6e"/><stop offset="0.5" stop-color="#0e7490"/><stop offset="1" stop-color="#0d9488"/></linearGradient><linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#5eead4"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#lg1)"/><g stroke="url(#lg2)" stroke-width="2.5" stroke-linecap="round" fill="none"><line x1="32" y1="10" x2="32" y2="54"/><line x1="11.7" y1="22" x2="52.3" y2="42"/><line x1="52.3" y1="22" x2="11.7" y2="42"/><path d="M32 10 L28 15 M32 10 L36 15 M32 54 L28 49 M32 54 L36 49"/><path d="M11.7 22 L13.5 28.3 M11.7 22 L18 20.2 M52.3 42 L50.5 35.7 M52.3 42 L46 43.8"/><path d="M52.3 22 L50.5 28.3 M52.3 22 L46 20.2 M11.7 42 L13.5 35.7 M11.7 42 L18 43.8"/></g><g fill="none" stroke="#fff" stroke-width="2.5"><ellipse cx="32" cy="32" rx="7" ry="4.5"/><ellipse cx="32" cy="32" rx="7" ry="4.5" transform="rotate(60 32 32)"/><ellipse cx="32" cy="32" rx="7" ry="4.5" transform="rotate(120 32 32)"/></g><circle cx="32" cy="32" r="2" fill="#fff"/></svg></div>
+      <div>
+        <div class="sb-name">湘链智图</div>
+        <div class="sb-sub">冷链数字平台</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-group-title">核心功能</div>
+      <a href="index.html" class="nav-item"><span class="nav-icon">🏠</span><span>总览看板</span></a>
+      <a href="index.html#mapSection" class="nav-item"><span class="nav-icon">🗺️</span><span>冷链地图</span></a>
+      <a href="index.html#analysis" class="nav-item"><span class="nav-icon">📊</span><span>数据洞察</span></a>
+      <a href="index.html#synergy" class="nav-item"><span class="nav-icon">🔗</span><span>主体协同</span></a>
+      <a href="index.html#simulate" class="nav-item"><span class="nav-icon">⚙️</span><span>智能模拟</span></a>
+      <div class="nav-group-title">数据中心</div>
+      <a href="data.html" class="nav-item active"><span class="nav-icon">📋</span><span>产量数据</span></a>
+      <a href="projects.html" class="nav-item"><span class="nav-icon">🏗️</span><span>冷链项目</span></a>
+      <div class="nav-group-title">系统</div>
+      <a href="about.html" class="nav-item"><span class="nav-icon">📖</span><span>项目概览</span></a>
+      <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span><span>个人中心</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-avatar" id="userAvatar">A</div>
+      <div>
+        <div class="user-name" id="userName">管理员</div>
+        <div class="user-role">系统管理员</div>
+      </div>
+      <button class="logout-btn" onclick="logout()" title="退出登录">⎋</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="breadcrumb">
+      <a href="index.html">首页</a>
+      <span class="sep">/</span>
+      <span>数据中心</span>
+      <span class="sep">/</span>
+      <span>产量数据</span>
+    </div>
+
+    <div class="page-header">
+      <h1 class="page-title">生鲜产量数据</h1>
+      <p class="page-subtitle">湖南省14个市州2020-2024年五类生鲜农产品产量统计</p>
+    </div>
+
+    <!-- 品类切换 -->
+    <div class="tab-bar" id="productTabs">
+      <button class="tab-btn active" data-type="vegetable">🥬 蔬菜</button>
+      <button class="tab-btn" data-type="fruit">🍎 水果</button>
+      <button class="tab-btn" data-type="meat">🥩 肉类</button>
+      <button class="tab-btn" data-type="aquatic">🐟 水产品</button>
+      <button class="tab-btn" data-type="egg">🥚 禽蛋</button>
+    </div>
+
+    <!-- 筛选栏 -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label>年份：</label>
+        <select class="filter-select" id="yearSelect">
+          <option value="2024">2024年</option>
+          <option value="2023">2023年</option>
+          <option value="2022">2022年</option>
+          <option value="2021">2021年</option>
+          <option value="2020">2020年</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>排序：</label>
+        <select class="filter-select" id="sortSelect">
+          <option value="desc">产量从高到低</option>
+          <option value="asc">产量从低到高</option>
+          <option value="name">按名称排序</option>
+        </select>
+      </div>
+      <button class="btn-export" onclick="exportData()">📥 导出数据</button>
+    </div>
+
+    <!-- 数据表格 -->
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">
+          <span class="title-icon" id="tableIcon">🥬</span>
+          <span id="tableTitle">蔬菜产量统计表</span>
+        </div>
+        <div class="table-summary" id="tableSummary">共 14 条记录 · 总产量 0 吨</div>
+      </div>
+      <div style="overflow-x: auto;">
+        <table class="data-table" id="dataTable">
+          <thead>
+            <tr>
+              <th style="width: 60px;">排名</th>
+              <th>市州</th>
+              <th class="num">2020年（吨）</th>
+              <th class="num">2021年（吨）</th>
+              <th class="num">2022年（吨）</th>
+              <th class="num">2023年（吨）</th>
+              <th class="num">2024年（吨）</th>
+              <th class="num">5年增幅</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div class="page-info">显示第 1-14 条，共 14 条记录</div>
+        <div class="page-buttons">
+          <button class="page-btn active">1</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // 五类生鲜产量数据（2020-2024年，单位：吨）
+    const productionData = {
+      vegetable: {
+        name: '蔬菜', icon: '🥬',
+        cities: [
+          { name: '长沙市', data: [5530874, 5746452, 5903217, 6085283, 6313544] },
+          { name: '株洲市', data: [3306966, 3391945, 3417867, 3517541, 3651332] },
+          { name: '湘潭市', data: [1692970, 1747106, 1763546, 1814000, 1879278] },
+          { name: '衡阳市', data: [2159840, 2212251, 2251084, 2318415, 2403032] },
+          { name: '邵阳市', data: [3033882, 3226910, 3297688, 3399514, 3533805] },
+          { name: '岳阳市', data: [2625613, 2702539, 2811311, 2902299, 3029089] },
+          { name: '常德市', data: [3461639, 3572733, 3637905, 3752806, 3895223] },
+          { name: '张家界市', data: [1041345, 1060867, 1072612, 1097910, 1134305] },
+          { name: '益阳市', data: [4708285, 4901139, 4981773, 5137356, 5338078] },
+          { name: '郴州市', data: [3347681, 3493623, 3548822, 3661132, 3745813] },
+          { name: '永州市', data: [6157384, 6431639, 6589725, 6787352, 7067420] },
+          { name: '怀化市', data: [1648744, 1719845, 1747236, 1798754, 1857582] },
+          { name: '娄底市', data: [1629736, 1669153, 1711506, 1763667, 1831572] },
+          { name: '湘西州', data: [755862, 813027, 832753, 852119, 871155] }
+        ]
+      },
+      fruit: {
+        name: '水果', icon: '🍎',
+        cities: [
+          { name: '长沙市', data: [407914, 395018, 406306, 419429, 430538] },
+          { name: '株洲市', data: [416314, 432240, 442590, 456177, 471682] },
+          { name: '湘潭市', data: [121543, 124531, 128012, 132078, 136640] },
+          { name: '衡阳市', data: [548550, 561361, 571518, 588448, 608661] },
+          { name: '邵阳市', data: [1108079, 1227050, 1204930, 1288205, 1332210] },
+          { name: '岳阳市', data: [556771, 555325, 554741, 563879, 585009] },
+          { name: '常德市', data: [1404546, 1425673, 1448214, 1543576, 1635411] },
+          { name: '张家界市', data: [336004, 338326, 323955, 325104, 337865] },
+          { name: '益阳市', data: [613899, 640811, 661881, 685167, 702487] },
+          { name: '郴州市', data: [949481, 998329, 1044172, 1098829, 1135067] },
+          { name: '永州市', data: [1646670, 1733634, 1788285, 1860675, 1952724] },
+          { name: '怀化市', data: [2175826, 2251210, 2269741, 2411938, 2581696] },
+          { name: '娄底市', data: [287717, 299210, 311111, 333115, 359386] },
+          { name: '湘西州', data: [934202, 953705, 926227, 954278, 987906] }
+        ]
+      },
+      meat: {
+        name: '肉类', icon: '🥩',
+        cities: [
+          { name: '长沙市', data: [285988, 352291, 358514, 357273, 383503] },
+          { name: '株洲市', data: [193000, 240285, 251819, 255848, 249963] },
+          { name: '湘潭市', data: [192600, 248800, 257000, 260200, 281500] },
+          { name: '衡阳市', data: [560000, 642200, 660000, 672700, 722400] },
+          { name: '邵阳市', data: [462300, 583800, 596500, 594800, 586200] },
+          { name: '岳阳市', data: [274900, 360000, 370500, 371000, 365500] },
+          { name: '常德市', data: [467100, 574500, 584000, 560300, 560300] },
+          { name: '张家界市', data: [63000, 82215, 81639, 79353, 76417] },
+          { name: '益阳市', data: [270630, 353340, 360473, 355970, 347908] },
+          { name: '郴州市', data: [380238, 495456, 520828, 519658, 514509] },
+          { name: '永州市', data: [494200, 620900, 640100, 649300, 649100] },
+          { name: '怀化市', data: [311226, 328800, 335400, 334200, 323032] },
+          { name: '娄底市', data: [254600, 320600, 335300, 334200, 332700] },
+          { name: '湘西州', data: [102704, 102704, 117600, 117700, 116400] }
+        ]
+      },
+      aquatic: {
+        name: '水产品', icon: '🐟',
+        cities: [
+          { name: '长沙市', data: [113631, 120660, 123673, 129612, 136000] },
+          { name: '株洲市', data: [98653, 101951, 104340, 109452, 114399] },
+          { name: '湘潭市', data: [95221, 99709, 102197, 107205, 112327] },
+          { name: '衡阳市', data: [284392, 290196, 297481, 312325, 327666] },
+          { name: '邵阳市', data: [96037, 96733, 99110, 106274, 110425] },
+          { name: '岳阳市', data: [516314, 533099, 546385, 573594, 598472] },
+          { name: '常德市', data: [461051, 474261, 486269, 510571, 535078] },
+          { name: '张家界市', data: [11986, 8685, 8380, 8754, 9108] },
+          { name: '益阳市', data: [433604, 447563, 458804, 481746, 505505] },
+          { name: '郴州市', data: [109348, 112139, 114749, 118722, 122697] },
+          { name: '永州市', data: [186176, 190603, 195129, 204405, 214204] },
+          { name: '怀化市', data: [75237, 79091, 80862, 83139, 86860] },
+          { name: '娄底市', data: [90613, 91219, 93253, 97185, 101568] },
+          { name: '湘西州', data: [16895, 15152, 15312, 15980, 16707] }
+        ]
+      },
+      egg: {
+        name: '禽蛋', icon: '🥚',
+        cities: [
+          { name: '长沙市', data: [46415, 48300, 48740, 49684, 65195] },
+          { name: '株洲市', data: [43859, 44620, 45609, 46597, 47586] },
+          { name: '湘潭市', data: [42500, 45500, 45400, 48200, 34400] },
+          { name: '衡阳市', data: [221600, 224000, 219800, 198950, 178100] },
+          { name: '邵阳市', data: [19400, 19400, 19300, 24100, 21156] },
+          { name: '岳阳市', data: [74300, 74700, 74500, 77300, 74500] },
+          { name: '常德市', data: [390769, 378655, 377519, 356351, 265125] },
+          { name: '张家界市', data: [14000, 14414, 14313, 17634, 27439] },
+          { name: '益阳市', data: [156800, 155900, 155300, 161606, 146028] },
+          { name: '郴州市', data: [36050, 35170, 35278, 39405, 77713] },
+          { name: '永州市', data: [72200, 71900, 71800, 83900, 103000] },
+          { name: '怀化市', data: [16200, 16500, 16300, 21500, 58753] },
+          { name: '娄底市', data: [32900, 41100, 40900, 50300, 68000] },
+          { name: '湘西州', data: [11100, 10400, 10300, 13200, 38000] }
+        ]
+      }
+    };
+
+    let currentType = 'vegetable';
+    let currentYear = 2024;
+    let currentSort = 'desc';
+
+    function formatNum(n) {
+      return n.toLocaleString('zh-CN');
+    }
+
+    function renderTable() {
+      const product = productionData[currentType];
+      let cities = [...product.cities];
+
+      // 排序
+      const yearIdx = currentYear - 2020;
+      if (currentSort === 'desc') {
+        cities.sort((a, b) => b.data[yearIdx] - a.data[yearIdx]);
+      } else if (currentSort === 'asc') {
+        cities.sort((a, b) => a.data[yearIdx] - b.data[yearIdx]);
+      } else {
+        cities.sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'));
+      }
+
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+
+      let total = 0;
+
+      cities.forEach((city, idx) => {
+        const growth = ((city.data[4] - city.data[0]) / city.data[0] * 100).toFixed(1);
+        const isPositive = parseFloat(growth) >= 0;
+        total += city.data[yearIdx];
+
+        const rankClass = idx === 0 ? 'rank-1' : idx === 1 ? 'rank-2' : idx === 2 ? 'rank-3' : 'rank-other';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><span class="rank-badge ${rankClass}">${idx + 1}</span></td>
+          <td><strong>${city.name}</strong></td>
+          <td class="num">${formatNum(city.data[0])}</td>
+          <td class="num">${formatNum(city.data[1])}</td>
+          <td class="num">${formatNum(city.data[2])}</td>
+          <td class="num">${formatNum(city.data[3])}</td>
+          <td class="num"><strong>${formatNum(city.data[4])}</strong></td>
+          <td class="num ${isPositive ? 'growth-positive' : 'growth-negative'}">${isPositive ? '↑' : '↓'} ${Math.abs(growth)}%</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // 更新标题和汇总
+      document.getElementById('tableTitle').textContent = `${product.name}产量统计表`;
+      document.getElementById('tableIcon').textContent = product.icon;
+      document.getElementById('tableSummary').textContent = `共 ${cities.length} 条记录 · ${currentYear}年总产量 ${formatNum(total)} 吨`;
+    }
+
+    // 品类切换
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentType = this.dataset.type;
+        renderTable();
+      });
+    });
+
+    // 年份切换
+    document.getElementById('yearSelect').addEventListener('change', function() {
+      currentYear = parseInt(this.value);
+      renderTable();
+    });
+
+    // 排序切换
+    document.getElementById('sortSelect').addEventListener('change', function() {
+      currentSort = this.value;
+      renderTable();
+    });
+
+    function exportData() {
+      const table = document.getElementById('dataTable');
+      if (!table) return;
+      const rows = table.querySelectorAll('tr');
+      let csv = [];
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('th, td');
+        const rowData = Array.from(cells).map(c => '"' + c.textContent.replace(/"/g, '""') + '"');
+        csv.push(rowData.join(','));
+      });
+      const csvContent = '\uFEFF' + csv.join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      const now = new Date();
+      link.download = '生鲜产量数据_' + now.getFullYear() + (now.getMonth()+1) + now.getDate() + '.csv';
+      link.click();
+      showToast('数据导出成功');
+    }
+
+    function showToast(msg) {
+      let toast = document.getElementById('dataToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'dataToast';
+        toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(15,118,110,0.95);color:white;padding:12px 24px;border-radius:10px;font-size:14px;z-index:2000;opacity:0;transition:opacity 0.3s;box-shadow:0 4px 20px rgba(0,0,0,0.15);';
+        document.body.appendChild(toast);
+      }
+      toast.textContent = msg;
+      toast.style.opacity = '1';
+      setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+    }
+
+    // 统一登录检查
+    function checkLogin() {
+      const params = new URLSearchParams(window.location.search);
+      const urlLoggedIn = params.get('loggedIn');
+      const urlUser = params.get('user');
+      let isLoggedIn = false;
+      let username = '';
+      try {
+        isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        username = localStorage.getItem('username') || '';
+      } catch(e) {}
+      if (urlLoggedIn === '1' && urlUser) {
+        isLoggedIn = true;
+        username = decodeURIComponent(urlUser);
+        try {
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('username', username);
+          localStorage.setItem('loginTime', new Date().toISOString());
+        } catch(e) {}
+      }
+      if (!isLoggedIn) {
+        window.location.href = 'login.html';
+        return false;
+      }
+      return true;
+    }
+
+    function initUser() {
+      if (!checkLogin()) return;
+      let username = localStorage.getItem('username') || '管理员';
+      try {
+        const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+        if (profile.nickname) username = profile.nickname;
+      } catch(e) {}
+      document.getElementById('userName').textContent = username;
+      document.getElementById('userAvatar').textContent = username.charAt(0).toUpperCase();
+    }
+
+    function logout() {
+      if (confirm('确定要退出登录吗？')) {
+        try {
+          localStorage.removeItem('isLoggedIn');
+          localStorage.removeItem('username');
+          localStorage.removeItem('loginTime');
+        } catch(e) {}
+        window.location.href = 'login.html';
+      }
+    }
+
+    initUser();
+    renderTable();
+
+    // 侧边栏收起/展开
+    function toggleSidebar() {
+      const sidebar = document.getElementById('appSidebar');
+      const body = document.body;
+      sidebar.classList.toggle('collapsed');
+      body.classList.toggle('sidebar-collapsed');
+      const toggleBtn = sidebar.querySelector('.sidebar-toggle');
+      if (sidebar.classList.contains('collapsed')) {
+        toggleBtn.textContent = '»';
+        try { localStorage.setItem('sidebarCollapsed', 'true'); } catch(e) {}
+      } else {
+        toggleBtn.textContent = '«';
+        try { localStorage.setItem('sidebarCollapsed', 'false'); } catch(e) {}
+      }
+    }
+
+    // 恢复侧边栏状态
+    (function restoreSidebarState() {
+      try {
+        if (localStorage.getItem('sidebarCollapsed') === 'true') {
+          const sidebar = document.getElementById('appSidebar');
+          const body = document.body;
+          sidebar.classList.add('collapsed');
+          body.classList.add('sidebar-collapsed');
+          const toggleBtn = sidebar.querySelector('.sidebar-toggle');
+          toggleBtn.textContent = '»';
+        }
+      } catch(e) {}
+    })();
+  </script>
+</body>
+</html>

@@ -1,13 +1,21 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# 备份文件
+_backup-*/
+_trash-*/
+
 # Python
 __pycache__/
 *.pyc
-.venv/
-venv/
+*.pyo
 
-# 系统
-.DS_Store
-Thumbs.db
-
-# 临时
+# 日志
 *.log
-.superpowers/
+
+# 临时文件
+*.tmp
+*.temp

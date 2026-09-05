@@ -1,109 +1,112 @@
-# 湘链智图 · 湖南省物流规划数字平台
+# 湘链智图 - 湖南省生鲜冷链物流数字化平台
 
-> 第十一届湖南省大学生现代物流设计竞赛 参赛作品演示
-> 产业端 × 物流端 × 销售端 —— 三端协同的省域智慧物流规划交互平台
+> 第十一届湖南省大学生现代物流设计竞赛参赛作品
 
-## 一、项目定位
+## 📋 项目简介
 
-围绕湖南省域物流体系，从三个视角展示并模拟物流规划决策：
+**湘链智图**是面向湖南省生鲜冷链物流行业的数字化管理平台，通过数据可视化、运输模拟和需求预测三大核心模块，为冷链企业、监管部门和研究机构提供决策支持。
 
-| 视角 | 内容 |
+平台整合了湖南省14个市州的生鲜产量、冷库资源、运输网络等多源数据，实现了"省市县三级下钻"的交互式地图可视化，以及运输方案智能测算与需求趋势预测功能。
+
+## ✨ 核心功能
+
+### 1. 冷链资源地图
+- 🗺️ 湖南省14市州交互式地图（ECharts + GeoJSON）
+- 📊 五大核心指标实时展示：冷库总容量、在途车辆、运输量、平均时效、碳排
+- 🔍 市州→区县三级下钻，122个区县数据全覆盖
+- 📈 右侧联动详情面板，展示产量结构、运力分布、冷库资源
+
+### 2. 运输方案模拟器
+- 🚚 起讫市州 + 生鲜品类 + 吨量参数化输入
+- 💰 自动计算：运输成本、时效、温控成本、损耗率、碳排放
+- 📉 支持多方案对比分析
+
+### 3. 需求趋势预测
+- 📅 基于历史数据的需求预测模型
+- 🔄 季节因子 + 品类特征趋势分析
+- 📊 多品类预测结果可视化对比
+
+### 4. 产量数据中心
+- 📋 5类生鲜（蔬菜/水果/肉类/水产/禽蛋）× 14市州 × 5年产量数据表
+- 🔍 支持品类切换、年份切换、排序筛选
+- 📥 一键导出 CSV
+
+### 5. 重点冷链项目
+- 🏗️ 6个省级重点冷链项目展示
+- 🔎 区域/类型筛选 + 关键词搜索
+- ⭐ 关注收藏功能
+
+## 🛠️ 技术栈
+
+| 类别 | 技术 |
 |------|------|
-| 产业端 | 先进制造 / 特色农业 / 文旅消费三大产业集群的物流需求、痛点与优化方案 |
-| 物流端 | 「枢纽 + 城市 + 县域」三级网络、6 条干线走廊、车队运力与成本分析 |
-| 销售端 | 渠道结构（电商/直播/商超等）、履约时效 SLA、月度订单流量 |
+| **前端框架** | 原生 HTML5 + CSS3 + JavaScript（ES6+） |
+| **可视化** | ECharts 5.x（地图、图表、热力图） |
+| **后端** | Python 3.x + 标准库（零依赖） |
+| **数据格式** | JSON / GeoJSON |
+| **地图数据** | 湖南省行政边界 GeoJSON（14市州 + 122区县） |
 
-交互能力：湖南全省地图节点可视化（可筛选/缩放）、干线飞线动画、路径优化实时计算、区域需求预测。
-
-## 二、技术架构
+## 📁 项目结构
 
 ```
-┌─────────────── 浏览器前端 ───────────────┐
-│ pages/index.html      页面结构            │
-│ js/app.js             交互逻辑 + ECharts   │
-│ colors_and_type.css   主题（清新蓝绿科技风）│
-│ assets/hunan.json     湖南省地图 GeoJSON   │
-│ assets/vendor/*       echarts 本地依赖    │
-└────────────── 同源 HTTP ──────────────┘
-┌─────────────── Python 后端 ──────────────┐
-│ backend/app_stdlib.py 零依赖 HTTP 服务    │
-│ backend/data/*.json   三端数据 + 节点/走廊 │
-│ backend/INTEGRATION.md 数据与模型接入指南 │
-└──────────────────────────────────────┘
+├── index.html          # 主页面（冷链地图、运输模拟、需求预测）
+├── login.html          # 登录页
+├── about.html          # 项目概览
+├── data.html           # 产量数据中心
+├── projects.html       # 冷链项目展示
+├── profile.html        # 个人中心
+├── favicon.svg         # 网站图标
+├── colors_and_type.css # 全局样式
+├── js/
+│   └── app.js          # 核心逻辑（地图、模拟、预测）
+├── assets/
+│   ├── hunan.json      # 湖南省市级GeoJSON
+│   ├── counties/       # 湖南省各市区县GeoJSON
+│   └── vendor/
+│       └── echarts.min.js
+└── backend/
+    ├── app_stdlib.py   # Python后端服务（零依赖）
+    └── data/           # JSON数据文件
 ```
 
-**零依赖**：后端仅用 Python 标准库，无需 pip install 任何东西；前后端同源部署，没有跨域问题。Python 3.6+ 均可运行。
+## 🚀 快速开始
 
-## 三、本地运行
+### 方式一：双击启动（Windows）
+
+```
+双击 启动网页.bat
+```
+
+自动启动后端服务并打开浏览器。
+
+### 方式二：命令行启动
 
 ```bash
-cd 现代物流网页/backend
+cd backend
 python app_stdlib.py
-# 打开 http://localhost:5000/
 ```
 
-换端口：`set PORT=8000 && python app_stdlib.py`（PowerShell：`$env:PORT=8000; python app_stdlib.py`）
+然后浏览器访问 `http://127.0.0.1:5000/login.html`
 
-## 四、API 一览
+### 测试账号
+- 管理员：`admin` / `123456`
+- 也可点击"游客体验"或"立即注册"
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/api/health` | 健康检查 |
-| GET | `/api/overview` | 全省 KPI 总览 |
-| GET | `/api/nodes?type=hub\|city\|county` | 物流节点（19 个，含经纬度） |
-| GET | `/api/routes` | 干线走廊 + 县域接驳线 |
-| GET | `/api/perspectives/industry` | 产业端视角数据 |
-| GET | `/api/perspectives/logistics` | 物流端视角数据 |
-| GET | `/api/perspectives/sales` | 销售端视角数据 |
-| POST | `/api/optimize-route` | 路径优化 `{startId,endId,cargoType,tons}` |
-| POST | `/api/predict-demand` | 需求预测 `{region,season}` |
+## 📊 数据说明
 
-## 五、如何替换真实数据（重要）
+本项目所用数据为模拟演示数据，包括：
+- 湖南省14市州5类生鲜年产量数据
+- 各市区县行政区划边界（GeoJSON）
+- 冷库容量、运输车辆、冷链线路等资源数据
+- 6个重点冷链项目信息
 
-当前 `backend/data/*.json` 为**演示占位数据**，替换时保持字段结构不变即可，前端无需改动：
+## 🏆 竞赛信息
 
-1. **节点数据** → 改 `nodes.json`（id/name/type/city/lng/lat/throughput）
-2. **走廊规划** → 改 `routes.json`（stops 引用 nodes 的 id）
-3. **三端指标/图表** → 改 `industry_perspectives.json` / `logistics_perspectives.json` / `sales_perspectives.json`
-4. **规划模型代码** → 参考 `backend/INTEGRATION.md`，把你的算法模块 import 到 `app_stdlib.py`，在 `compute_optimize_route()` 与 `compute_predict_demand()` 中调用；函数输入输出契约已固定
-5. 改完重启 `python app_stdlib.py` 即生效（数据有缓存）
+- **赛事**：第十一届湖南省大学生现代物流设计竞赛
+- **学校**：中国地质大学（北京）经济管理学院
+- **专业**：大数据管理与应用
+- **作品名称**：湘链智图 — 湖南省生鲜冷链物流数字化平台
 
-## 六、部署上线（免费方案）
+## 📝 License
 
-推荐 **Render**（免费 750 小时/月，支持 Python 原生服务）：
-
-1. 把本项目推送到 GitHub：
-   ```bash
-   git init   # 已初始化可跳过
-   git add .
-   git commit -m "feat: 湘链智图 v2 - 三端协同湖南省物流规划平台"
-   git remote add origin https://github.com/<你的用户名>/hunan-logistics-platform.git
-   git push -u origin main
-   ```
-2. 在 [render.com](https://render.com) 新建 **Web Service**，连接该仓库
-3. 配置：Build Command 留空；Start Command 填 `python app_stdlib.py`；实例类型 Free
-4. Render 会注入 `PORT` 环境变量，代码已自动适配
-5. 部署完成后获得 `https://xxx.onrender.com` 公网地址（免费实例闲置 15 分钟会休眠，首次访问需等待约 30-60 秒唤醒）
-
-备选：Vercel/Netlify 仅适合纯静态；Railway 有免费额度但需绑卡；比赛现场演示建议本地运行最稳定。
-
-## 七、目录结构
-
-```
-现代物流网页/
-├── .design                    # 画布元数据
-├── colors_and_type.css        # 全站主题样式
-├── README.md
-├── assets/
-│   ├── hunan.json             # 湖南省地图 GeoJSON（DataV.GeoAtlas）
-│   └── vendor/                # ECharts 等本地依赖
-├── pages/index.html           # 单页应用入口
-├── js/app.js                  # 全部交互逻辑
-└── backend/
-    ├── app_stdlib.py          # 零依赖后端入口
-    ├── INTEGRATION.md         # 真实数据与模型接入指南
-    └── data/*.json            # 演示数据（可整体替换）
-```
-
----
-页面数值均为演示占位数据，正式参赛版本将接入团队真实测算模型。
+仅供学习和研究使用。

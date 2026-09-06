@@ -22,18 +22,19 @@
 document.documentElement.className += ' anim';
 
 const API = {
-  overview: '/api/overview',
-  cities: '/api/cities',
-  products: '/api/products',
-  analysis: '/api/analysis',
-  cityDetail: '/api/city-detail?id=',
-  simulate: '/api/simulate-coldchain',
-  predict: '/api/predict-demand',
-  mapGeo: '/assets/hunan.json',
-  mapCounty: '/api/map-county?adcode=',
-  network: '/api/network',
-  events: '/api/events?limit=30',
-  resources: '/api/resources',
+  // 静态部署（GitHub Pages）时使用本地 JSON 文件
+  overview: 'backend/data/overview.json',
+  cities: 'backend/data/cities.json',
+  products: 'backend/data/products.json',
+  analysis: 'backend/data/analysis.json',
+  cityDetail: 'backend/data/cities.json', // 静态模式下从cities里取，详见getCityDetail()
+  simulate: 'backend/data/overview.json', // 静态模式下前端计算，详见simulateColdchain()
+  predict: 'backend/data/products.json',  // 静态模式下前端计算，详见predictDemand()
+  mapGeo: 'assets/hunan.json',
+  mapCounty: 'assets/counties/', // + adcode + _full.json
+  network: 'backend/data/network.json',
+  events: 'backend/data/events.json',
+  resources: 'backend/data/resources.json',
 };
 
 /* 冰川蓝 × 薄荷青 冷链主色板；琥珀不进通用色板——预警语义保留给 CSS .tag-warn */
@@ -481,7 +482,7 @@ async function drillToCounty(c) {
   const mapEl = document.getElementById('hunanMap');
   mapEl.innerHTML = '<div class="skeleton chart-skeleton"></div>'; // 区县边界在线首取可能耗时数秒，给明确加载态
   try {
-    const gj = await getJSON(API.mapCounty + adcode);
+    const gj = await getJSON(API.mapCounty + adcode + '_full.json');
     echarts.registerMap('county-' + c.id, gj);
     mapLevel = 'city';
     activeCountyCity = c;
@@ -521,8 +522,20 @@ async function openCityDetail(cid) {
   const box = document.getElementById('cityDetailBody');
   box.innerHTML = '<p class="hint"><span class="loading-spinner"></span> 加载中…</p>';
   try {
-    const d = await getJSON(API.cityDetail + encodeURIComponent(cid));
-    if (d.error) throw new Error(d.error);
+    // 静态模式：从 citiesData 里找对应城市，组装成详情格式
+    const city = citiesData.find(c => c.id === cid);
+    if (!city) throw new Error('未找到该城市数据');
+    // 按冷库容量排序算排名
+    const sorted = [...citiesData].sort((a, b) => b.coldStorageWanTons - a.coldStorageWanTons);
+    const rank = sorted.findIndex(c => c.id === cid) + 1;
+    const d = {
+      city: city,
+      storageRank: rank,
+      cityCount: citiesData.length,
+      productBreakdown: city.productBreakdown || [],
+      capacityTrend: city.capacityTrend || [],
+      logisticsRoutes: city.logisticsRoutes || [],
+    };
     renderCityDetail(d);
   } catch (e) {
     box.innerHTML = '<p class="error-state">详情加载失败：' + esc(e.message) + '</p>';
@@ -664,14 +677,36 @@ async function runSimulate() {
   btn.disabled = true;
   box.innerHTML = '<p class="hint"><span class="loading-spinner"></span> 正在模拟冷链运输…</p>';
   try {
-    const res = await postJSON(API.simulate, {
-      fromId: document.getElementById('simFrom').value,
-      toId: document.getElementById('simTo').value,
-      product: currentProduct,
-      tons: parseInt(document.getElementById('simTons').value, 10),
-    });
-    if (res.error) throw new Error(res.error);
-    lastSimRes = res; // 切主题后面板随最近结果原样复活
+    // 静态模式：前端简单计算运输模拟
+    const fromId = document.getElementById('simFrom').value;
+    const toId = document.getElementById('simTo').value;
+    const tons = parseInt(document.getElementById('simTons').value, 10) || 10;
+    const fromCity = citiesData.find(c => c.id === fromId) || { name: '起点', lngLat: [111, 27] };
+    const toCity = citiesData.find(c => c.id === toId) || { name: '终点', lngLat: [113, 28] };
+    const productMap = { fruitveg: { label: '果蔬', tempZone: '0~4℃', rate: 0.05, costFactor: 1 }, meat: { label: '肉类', tempZone: '-18℃以下', rate: 0.03, costFactor: 1.5 }, aquatic: { label: '水产', tempZone: '-20℃', rate: 0.06, costFactor: 1.8 }, egg: { label: '禽蛋', tempZone: '0~5℃', rate: 0.02, costFactor: 0.8 }, milk: { label: '乳品', tempZone: '2~6℃', rate: 0.04, costFactor: 1.2 } };
+    const p = productMap[currentProduct] || productMap.fruitveg;
+    // 简单计算距离（经纬度近似）
+    const dx = (toCity.lngLat?.[0] || 113) - (fromCity.lngLat?.[0] || 111);
+    const dy = (toCity.lngLat?.[1] || 28) - (fromCity.lngLat?.[1] || 27);
+    const distanceKm = Math.round(Math.sqrt(dx*dx + dy*dy) * 100);
+    const estimatedHours = Math.round(distanceKm / 60 * 10) / 10;
+    const costPerTon = Math.round(150 + distanceKm * 1.2 * p.costFactor);
+    const costYuan = costPerTon * tons;
+    const lossTons = Math.round(tons * p.rate * 100) / 100;
+    const lossValueYuan = Math.round(lossTons * 8000);
+    const co2Kg = Math.round(distanceKm * tons * 0.15);
+    const tempPassRate = 95 - Math.round(estimatedHours * 0.3);
+    const tempRiskPct = Math.max(5, 100 - tempPassRate);
+    const res = {
+      fromName: fromCity.name, toName: toCity.name,
+      distanceKm, estimatedHours, costYuan, costPerTon,
+      lossTons, lossValueYuan, co2Kg,
+      tempPassRate, tempRiskPct,
+      productLabel: p.label, tempZone: p.tempZone,
+      note: '静态演示模式：基于距离和品类参数的简化估算',
+      pathCoords: [fromCity.lngLat || [111, 27], toCity.lngLat || [113, 28]],
+    };
+    lastSimRes = res;
     const riskTag = res.tempRiskPct > 15
       ? '<span class="tag tag-warn">⚠ 断链风险偏高</span>'
       : '<span class="tag tag-green">✓ 温控达标率 ' + esc(res.tempPassRate) + '%</span>';
@@ -751,11 +786,32 @@ async function runPredict() {
   btn.disabled = true;
   box.innerHTML = '<p class="hint"><span class="loading-spinner"></span> 模型推理中…</p>';
   try {
-    const res = await postJSON(API.predict, {
-      cityId: document.getElementById('predCity').value,
-      season: segVal('seasonSeg'),
+    // 静态模式：前端简单预测
+    const cityId = document.getElementById('predCity').value;
+    const seasonIdx = segVal('seasonSeg');
+    const city = citiesData.find(c => c.id === cityId) || { name: '某市', freshOutputWanTons: 300 };
+    const baseOutput = city.freshOutputWanTons || 300;
+    const monthLabels = ['1月', '2月', '3月', '4月', '5月', '6月'];
+    // 季节性因子：夏秋季高，冬春季低
+    const seasonFactors = [0.85, 0.9, 1.0, 1.15, 1.25, 1.2];
+    const startMonth = seasonIdx * 2;
+    const predicted = monthLabels.map((_, i) => {
+      const factor = seasonFactors[(startMonth + i) % 6] * (0.95 + Math.random() * 0.1);
+      return Math.round(baseOutput / 12 * factor * 10) / 10;
     });
-    if (res.error) throw new Error(res.error);
+    const totalHalf = Math.round(predicted.reduce((a, b) => a + b, 0) * 10) / 10;
+    const peakMonths = predicted.map((v, i) => ({ v, i })).sort((a, b) => b.v - a.v).slice(0, 2).map(o => monthLabels[o.i]);
+    const recommendedVehicles = Math.round(totalHalf / 50);
+    const res = {
+      cityName: city.name,
+      monthLabels,
+      predictedMonthlyWanTons: predicted,
+      totalHalfYearWanTons: totalHalf,
+      peakMonths,
+      recommendedVehicles,
+      confidence: 0.82,
+      note: '静态演示模式：基于产量基数和季节因子的简化趋势预测',
+    };
     lastPredRes = res;
     const items = res.predictedMonthlyWanTons.slice(0, 3)
       .map((v, i) => ({ label: res.monthLabels[i] + '需求', value: v, unit: '万吨' }));
